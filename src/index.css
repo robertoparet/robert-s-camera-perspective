@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Inter var', system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  @apply m-0 min-h-screen bg-gray-900 text-gray-100;
+  @apply m-0 min-h-screen bg-mono-950 text-mono-100;
 }
 
 #root {
@@ -18,7 +18,7 @@ body {
 
 /* Estilos para el zoom de imágenes */
 [data-rmiz-modal-overlay] {
-  @apply bg-black/90 backdrop-blur-sm;
+  @apply bg-mono-950 bg-opacity-98 backdrop-blur-sm;
 }
 
 [data-rmiz-modal-img] {
@@ -28,34 +28,39 @@ body {
 /* Animaciones suaves para las imágenes */
 .image-enter {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.98);
+  transition: opacity 800ms ease-smooth, transform 800ms ease-smooth;
 }
 
 .image-enter-active {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
 }
 
 /* Scrollbar personalizada */
 ::-webkit-scrollbar {
-  @apply w-2;
+  @apply w-1.5;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-800;
+  @apply bg-mono-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded-full hover:bg-gray-500 transition-colors;
+  @apply bg-mono-700 rounded-full hover:bg-mono-600 transition-all duration-400;
 }
 
 /* Mejoras de accesibilidad */
 :focus {
-  @apply outline-none ring-2 ring-purple-500 ring-offset-2 ring-offset-gray-900;
+  @apply outline-none ring-2 ring-mono-400 ring-offset-2 ring-offset-mono-950;
 }
 
 /* Efecto de carga para imágenes */
 .image-loading {
-  @apply animate-pulse bg-gray-700 rounded-xl;
+  @apply animate-pulse bg-mono-800 rounded-xl;
+}
+
+/* Transiciones suaves globales */
+* {
+  @apply transition-all duration-400 ease-smooth;
 }

@@ -1,4 +1,26 @@
 import { createContext } from 'react';
-import { ImageContextType } from '../types/image';
+import { Image } from '../types/image';
 
-export const ImageContext = createContext<ImageContextType | undefined>(undefined);
+export interface ImageContextType {
+  images: Image[];
+  addImage: (title: string, url: string) => Promise<void>;
+  deleteImage: (id: string) => Promise<void>;
+  currentPage: number;
+  totalPages: number;
+  loading: boolean;
+  setCurrentPage: (page: number) => void;
+  pageSize: number;
+  totalImages: number;
+}
+
+export const ImageContext = createContext<ImageContextType>({
+  images: [],
+  addImage: async () => {},
+  deleteImage: async () => {},
+  currentPage: 1,
+  totalPages: 1,
+  loading: false,
+  setCurrentPage: () => {},
+  pageSize: 12,
+  totalImages: 0,
+});

@@ -1,23 +1,40 @@
-import { useState, useRef } from 'react';
-import { useImages } from '../hooks/useImages';
+import { useState, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Image } from '../types/image';
+import { ImageContext } from '../context/context';
+import { uploadImage } from '../services/cloudinary';
+import type { Image } from '../types/image';
 
 export function AdminPanel() {
   const [title, setTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addImage, images, deleteImage } = useImages();
+  const { addImage, images, deleteImage } = useContext(ImageContext);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedFile) {
-      addImage({ title: title || selectedFile.name }, selectedFile);
+    if (!selectedFile) return;
+
+    try {
+      setUploading(true);
+      setError('');
+      console.log('Starting upload to Cloudinary...');
+      const cloudinaryResult = await uploadImage(selectedFile);
+      console.log('Cloudinary upload successful, adding to Supabase...');
+      await addImage(title || selectedFile.name, cloudinaryResult.url);
+      console.log('Image added successfully');
+      
       setTitle('');
       setSelectedFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setError(error instanceof Error ? error.message : 'Error al subir la imagen');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -128,11 +145,12 @@ export function AdminPanel() {
 
               <button
                 type="submit"
-                disabled={!selectedFile}
+                disabled={!selectedFile || uploading}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subir Imagen
+                {uploading ? 'Subiendo...' : 'Subir Imagen'}
               </button>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
             </form>
           </div>
         </div>
@@ -148,7 +166,7 @@ export function AdminPanel() {
                 >
                   <img
                     src={image.url}
-                    alt={image.title}
+                    alt={image.titulo}
                     className="w-full h-32 object-cover"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -160,7 +178,7 @@ export function AdminPanel() {
                     </button>
                   </div>
                   <div className="p-2">
-                    <p className="text-white text-sm truncate">{image.title}</p>
+                    <p className="text-white text-sm truncate">{image.titulo}</p>
                   </div>
                 </div>
               ))}

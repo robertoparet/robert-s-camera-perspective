@@ -1,12 +1,14 @@
 export interface Image {
   id: string;
   url: string;
-  title: string;
+  titulo: string;
+  fecha_subida: string;
   file?: File;
+  publicId?: string;
 }
 
 export interface ImageContextType {
   images: Image[];
-  addImage: (image: Partial<Image>, file?: File) => void;
-  deleteImage: (id: string) => void;
+  addImage: (title: string, url: string) => Promise<void>;
+  deleteImage: (id: string) => Promise<void>;
 }
