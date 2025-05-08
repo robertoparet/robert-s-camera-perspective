@@ -64,7 +64,7 @@ export async function uploadImage(file: File): Promise<CloudinaryResponse> {
   }
 }
 
-export async function deleteCloudinaryImage(publicId: string): Promise<void> {
+export async function deleteCloudinaryImage(_publicId: string): Promise<void> {
   // Since we're using unsigned uploads, we can't delete images from the frontend
   // You'll need to implement this on your backend with proper authentication
   console.warn('Image deletion from Cloudinary requires backend implementation with proper authentication');

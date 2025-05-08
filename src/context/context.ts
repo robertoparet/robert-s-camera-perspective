@@ -3,7 +3,7 @@ import { Image } from '../types/image';
 
 export interface ImageContextType {
   images: Image[];
-  addImage: (title: string, url: string) => Promise<void>;
+  addImage: (title: string, url: string) => Promise<Image>;
   deleteImage: (id: string) => Promise<void>;
   currentPage: number;
   totalPages: number;
@@ -15,7 +15,9 @@ export interface ImageContextType {
 
 export const ImageContext = createContext<ImageContextType>({
   images: [],
-  addImage: async () => {},
+  addImage: async () => {
+    throw new Error('Not implemented');
+  },
   deleteImage: async () => {},
   currentPage: 1,
   totalPages: 1,

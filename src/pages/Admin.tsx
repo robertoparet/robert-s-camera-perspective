@@ -58,15 +58,6 @@ export function Admin() {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
@@ -191,7 +182,7 @@ export function Admin() {
                     <div className="aspect-w-4 aspect-h-3">
                       <img
                         src={image.url}
-                        alt={image.title}
+                        alt={image.titulo}
                         className="w-full h-full object-cover"
                       />
                     </div>

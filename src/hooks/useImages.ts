@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useContext, useRef } from 'react';
 import { getImages as getSupabaseImages, addImage as addSupabaseImage, deleteImage as deleteSupabaseImage } from '../services/supabase';
-import { uploadImage, deleteCloudinaryImage } from '../services/cloudinary';
+import { deleteCloudinaryImage } from '../services/cloudinary';
 import type { Image } from '../types/image';
 import { ImageContext } from '../context/context';
 

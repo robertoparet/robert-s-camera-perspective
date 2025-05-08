@@ -137,12 +137,10 @@ export function Home() {
           maxZoomPixelRatio: 8,
           zoomInMultiplier: 2,
           doubleTapDelay: 300,
-          doubleClickMaxStops: 2,
           keyboardMoveDistance: 50,
           wheelZoomDistanceFactor: 100,
           pinchZoomDistanceFactor: 100,
-          scrollToZoom: true,
-          doubleClick: true
+          scrollToZoom: true
         }}
         carousel={{
           padding: "0px",
@@ -151,8 +149,8 @@ export function Home() {
         render={{
           buttonPrev: () => null,
           buttonNext: () => null,
-          buttonZoom: () => null, // Quitar el botón de zoom ya que usaremos gestos
-          iconZoom: () => null
+          buttonZoom: () => null,
+          iconZoomIn: () => null
         }}
       />
     </>
