@@ -13,7 +13,7 @@ export interface Image {
   fecha_subida: string;
   file?: File;
   publicId?: string;
-  album_id?: string;
+  album_id?: string | null;
   user_id: string;
 }
 

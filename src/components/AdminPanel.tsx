@@ -2,7 +2,7 @@ import { useState, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ImageContext } from '../context/context';
 import { uploadImage } from '../services/cloudinary';
-import type { Image, Album } from '../types/image';
+import type { Image } from '../types/image';
 
 type AdminView = 'upload' | 'classification';
 
@@ -15,7 +15,6 @@ export function AdminPanel() {
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDescription, setNewAlbumDescription] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('');
-  const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { 
@@ -80,9 +79,9 @@ export function AdminPanel() {
     }
   };
 
-  const handleImageAlbumUpdate = async (imageId: string, albumId: string) => {
+  const handleImageAlbumUpdate = async (imageId: string, albumId: string | null) => {
     try {
-      await updateImageAlbum(imageId, albumId === 'none' ? null : albumId);
+      await updateImageAlbum(imageId, albumId);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error al actualizar el álbum de la imagen');
     }

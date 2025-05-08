@@ -21,6 +21,7 @@ export interface GalleryImage {
   titulo: string;
   fecha_subida: string;
   album_id?: string | null;
+  user_id: string;
 }
 
 export async function signIn(email: string, password: string) {
@@ -83,7 +84,8 @@ export async function addImage(title: string, url: string, albumId?: string) {
       titulo: title, 
       url: url,
       fecha_subida: new Date().toISOString(),
-      album_id: albumId || null
+      album_id: albumId || null,
+      user_id: session.user.id
     }])
     .select()
     .single();
