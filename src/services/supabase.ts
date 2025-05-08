@@ -7,13 +7,20 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 
 export interface GalleryImage {
   id: string;
   url: string;
   titulo: string;
   fecha_subida: string;
+  album_id?: string | null;
 }
 
 export async function signIn(email: string, password: string) {
@@ -31,46 +38,39 @@ export async function signOut() {
   if (error) throw error;
 }
 
-export async function getImages(page = 1, pageSize = 12) {
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
-  
-  console.log('Fetching images with params:', { page, pageSize, from, to });
-
-  // Primero obtener el conteo total
-  const { count, error: countError } = await supabase
-    .from('imagenes')
-    .select('id', { count: 'exact', head: true });
-
-  if (countError) {
-    console.error('Error getting count:', countError);
-    throw countError;
-  }
-
-  console.log('Total count:', count);
-
-  // Luego obtener los registros paginados
-  const { data, error } = await supabase
-    .from('imagenes')
-    .select('*')
-    .order('fecha_subida', { ascending: false })
-    .range(from, to);
+export async function getImages(page = 1, pageSize = 12, albumId?: string | null) {
+  try {
+    const from = (page - 1) * pageSize;
     
-  if (error) {
-    console.error('Error fetching images:', error);
+    let query = supabase
+      .from('imagenes')
+      .select('*', { count: 'exact' });
+
+    if (albumId) {
+      query = query.eq('album_id', albumId);
+    }
+
+    const { data, count, error } = await query
+      .order('fecha_subida', { ascending: false })
+      .range(from, from + pageSize - 1);
+
+    if (error) {
+      console.error('Supabase query error:', error);
+      throw error;
+    }
+
+    console.log('Fetched images:', { count, imageCount: data?.length });
+    return {
+      images: data || [],
+      totalCount: count || 0
+    };
+  } catch (error) {
+    console.error('Error in getImages:', error);
     throw error;
   }
-
-  console.log('Fetched images:', data);
-  
-  return { 
-    images: data as GalleryImage[],
-    totalCount: count ?? 0
-  };
 }
 
-export async function addImage(title: string, url: string) {
-  // Verificar la sesión actual
+export async function addImage(title: string, url: string, albumId?: string) {
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session) {
@@ -82,7 +82,8 @@ export async function addImage(title: string, url: string) {
     .insert([{ 
       titulo: title, 
       url: url,
-      fecha_subida: new Date().toISOString()
+      fecha_subida: new Date().toISOString(),
+      album_id: albumId || null
     }])
     .select()
     .single();
@@ -95,7 +96,6 @@ export async function addImage(title: string, url: string) {
 }
 
 export async function deleteImage(id: string) {
-  // Verificar la sesión actual
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session) {
@@ -107,5 +107,87 @@ export async function deleteImage(id: string) {
     .delete()
     .eq('id', id);
     
+  if (error) throw error;
+}
+
+export async function getAlbums() {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  const { data, error } = await supabase
+    .from('albumes')
+    .select('*')
+    .order('fecha_creacion', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching albums:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function addAlbum(nombre: string, descripcion?: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  const { data, error } = await supabase
+    .from('albumes')
+    .insert([{
+      nombre,
+      descripcion,
+      fecha_creacion: new Date().toISOString()
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding album:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function deleteAlbum(id: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  // Primero actualizar las imágenes que pertenecen a este álbum
+  const { error: updateError } = await supabase
+    .from('imagenes')
+    .update({ album_id: null })
+    .eq('album_id', id);
+
+  if (updateError) throw updateError;
+
+  // Luego eliminar el álbum
+  const { error } = await supabase
+    .from('albumes')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+export async function updateImageAlbum(imageId: string, albumId: string | null) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  const { error } = await supabase
+    .from('imagenes')
+    .update({ album_id: albumId })
+    .eq('id', imageId);
+
   if (error) throw error;
 }

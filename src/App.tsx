@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ImageProvider } from './context/ImageContext';
 import { Home } from './pages/Home';
-import { Admin } from './pages/Admin';
+import { AdminPanel } from './components/AdminPanel';
 import { Login } from './pages/Login';
 import './App.css';
 
@@ -38,7 +38,7 @@ function App() {
                   path="/admin"
                   element={
                     <PrivateRoute>
-                      <Admin />
+                      <AdminPanel />
                     </PrivateRoute>
                   }
                 />
