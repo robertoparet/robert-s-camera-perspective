@@ -37,10 +37,9 @@ export function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('gallery');
   const navigate = useNavigate();
-
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.code === 'Space') {
+      if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
         event.preventDefault();
         navigate('/admin');
       }
@@ -132,7 +131,7 @@ export function Home() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {albums.map(album => {
               const albumImages = images.filter(img => img.album_id === album.id);
               const coverImage = albumImages[0];
@@ -144,9 +143,9 @@ export function Home() {
                     filterByAlbum(album.id);
                     setViewMode('gallery');
                   }}
-                  className="group cursor-pointer bg-mono-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="group cursor-pointer bg-mono-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0"
                 >
-                  <div className="relative aspect-w-1 aspect-h-1">
+                  <div className="relative aspect-w-3 aspect-h-2 sm:aspect-w-1 sm:aspect-h-1">
                     {coverImage ? (
                       <img
                         src={coverImage.url}
