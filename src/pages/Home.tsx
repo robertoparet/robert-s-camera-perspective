@@ -4,6 +4,9 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { ImageContext } from '../context/context';
+import { OptimizedImage } from '../components/OptimizedImage';
+// import { useGalleryImageCache } from '../hooks/useImageCache';
+import { usePerformanceMonitor, PerformanceDebugger } from '../hooks/usePerformanceMonitor.tsx';
 import type { Image } from '../types/image';
 
 const ImageCard = memo(({ image, index, onImageClick }: { 
@@ -15,12 +18,13 @@ const ImageCard = memo(({ image, index, onImageClick }: {
     className="group relative bg-mono-900 rounded-xl overflow-hidden shadow-lg transition-all duration-800 ease-smooth cursor-zoom-in hover:shadow-xl hover:-translate-y-1"
     onClick={() => onImageClick(index)}
   >
-    <div className="relative overflow-hidden aspect-w-1 aspect-h-1">
-      <img
+    <div className="relative overflow-hidden">
+      <OptimizedImage
         src={image.url}
         alt={image.titulo}
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-800 ease-smooth group-hover:scale-102"
-        loading="lazy"
+        className="w-full h-auto object-cover transition-all duration-800 ease-smooth group-hover:scale-102"
+        quality="medium"
+        lazy={true}
       />
     </div>
     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-mono-950 via-mono-900/80 to-transparent p-4 transform opacity-0 group-hover:opacity-100 transition-all duration-300">
@@ -36,7 +40,24 @@ export function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('gallery');
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const navigate = useNavigate();
+  
+  // Performance monitoring
+  const { metrics } = usePerformanceMonitor(images?.length || 0);
+
+  // Initialize image cache for intelligent preloading - temporarily disabled
+  // const imageUrls = images?.map(img => img.url) || [];
+  // const { preloadSurroundingImages } = useGalleryImageCache(imageUrls, currentImageIndex);
+    
+  // Preload surrounding images when lightbox opens or index changes - temporarily disabled
+  /*
+  useEffect(() => {
+    if (lightboxOpen && imageUrls.length > 0) {
+      preloadSurroundingImages();
+    }
+  }, [lightboxOpen, currentImageIndex, preloadSurroundingImages, imageUrls.length]);
+  */
   
   // Force refresh of albums data when switching to albums view
   useEffect(() => {
@@ -44,12 +65,17 @@ export function Home() {
       loadAlbums();
     }
   }, [viewMode, loadAlbums]);
-  
-  useEffect(() => {
+    useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
         event.preventDefault();
         navigate('/admin');
+      }
+      
+      // Toggle performance monitor with Ctrl+M
+      if (event.ctrlKey && event.code === 'KeyM') {
+        event.preventDefault();
+        setShowPerformanceMonitor(prev => !prev);
       }
     };
 
@@ -129,9 +155,8 @@ export function Home() {
                   </svg>
                   Volver a Álbumes
                 </button>
-              </div>
-            )}
-            
+              </div>            )}
+              {/* Use columnar layout for natural aspect ratios */}
             <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 [column-fill:_balance] box-border min-h-[60vh]">
               {images?.map((image, index) => (
                 <div key={image.id} className="break-inside-avoid mb-6">
@@ -162,7 +187,8 @@ export function Home() {
                     {currentAlbumId ? 'Este álbum está vacío' : 'No hay imágenes'}
                   </p>
                 </div>
-              )}            </div>
+              )}
+            </div>
           </>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
@@ -178,17 +204,17 @@ export function Home() {
                     filterByAlbum(album.id);
                     setViewMode('gallery');
                   }}
-                  className="group cursor-pointer bg-mono-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0"
-                >
-                  <div className="relative aspect-w-3 aspect-h-2 sm:aspect-w-1 sm:aspect-h-1">
+                  className="group cursor-pointer bg-mono-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0"                >                  <div className="relative w-full h-64 overflow-hidden">
                     {coverImage ? (
-                      <img
+                      <OptimizedImage
                         src={coverImage.url}
                         alt={album.nombre}
-                        className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                        quality="medium"
+                        lazy={true}
                       />
                     ) : (
-                      <div className="w-full h-full bg-mono-700 flex items-center justify-center">
+                      <div className="absolute inset-0 w-full h-full bg-mono-700 flex items-center justify-center">
                         <svg
                           className="w-12 h-12 text-mono-500"
                           fill="none"
@@ -260,9 +286,9 @@ export function Home() {
           buttonPrev: () => null,
           buttonNext: () => null,
           buttonZoom: () => null,
-          iconZoomIn: () => null
-        }}
-      />
+          iconZoomIn: () => null        }}      />
+        {/* Performance monitoring in development */}
+      <PerformanceDebugger metrics={metrics} visible={showPerformanceMonitor} />
     </>
   );
 }
