@@ -36,14 +36,11 @@ export const ImageContext = createContext<ImageContextType>({
   currentPage: 1,
   totalPages: 1,
   loading: false,
-  setCurrentPage: () => {},  pageSize: 12,
+  setCurrentPage: () => {},
+  pageSize: 12,
   totalImages: 0,
   filterByAlbum: () => {},
   currentAlbumId: null,
-  loadAlbums: async () => {
-    throw new Error('Not implemented');
-  },
-  loadImages: async () => {
-    throw new Error('Not implemented');
-  }
+  loadAlbums: async () => {},
+  loadImages: async () => {}
 });
