@@ -16,23 +16,3 @@ export interface Image {
   album_id?: string | null;
   user_id: string;
 }
-
-export interface ImageContextType {
-  images: Image[];
-  albums: Album[];
-  addImage: (title: string, url: string, albumId?: string) => Promise<Image>;
-  deleteImage: (id: string) => Promise<void>;
-  addAlbum: (nombre: string, descripcion?: string) => Promise<Album>;
-  deleteAlbum: (id: string) => Promise<void>;
-  updateImageAlbum: (imageId: string, albumId: string | null) => Promise<void>;
-  currentPage: number;
-  totalPages: number;
-  loading: boolean;
-  setCurrentPage: (page: number) => void;
-  pageSize: number;
-  totalImages: number;
-  filterByAlbum: (albumId: string | null) => void;
-  currentAlbumId: string | null;
-  loadAlbums: () => Promise<void>;
-  loadImages: () => Promise<void>;
-}

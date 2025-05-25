@@ -56,18 +56,10 @@ export function Home() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [navigate]);
-
   const handleImageClick = useCallback((index: number) => {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   }, []);
-  
-  // Handle going back to album view - reloads albums to ensure count is correct
-  const handleBackToAlbums = useCallback(() => {
-    setViewMode('albums');
-    filterByAlbum(null);
-    loadAlbums();
-  }, [filterByAlbum, loadAlbums]);
 
   if (loading) {
     return (
