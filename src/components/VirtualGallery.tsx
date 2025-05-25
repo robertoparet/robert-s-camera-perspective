@@ -1,6 +1,6 @@
 import { memo, useMemo, useRef, useEffect, useState } from 'react';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import OptimizedImage from './OptimizedImage';
+import { OptimizedImage } from './OptimizedImage';
 import type { Image } from '../types/image';
 
 interface VirtualGalleryProps {
@@ -31,12 +31,11 @@ const Row = memo(({ index, style, data }: ListChildComponentProps<RowData>) => {
             key={image.id}
             className="flex-1 group relative bg-mono-900 rounded-xl overflow-hidden shadow-lg transition-all duration-300 cursor-zoom-in hover:shadow-xl hover:-translate-y-1"
             onClick={() => onImageClick(imageIndex)}
-          >
-            <div className="relative overflow-hidden">
+          >            <div className="relative overflow-hidden">
               <OptimizedImage
                 src={image.url}
                 alt={image.titulo}
-                className="w-full h-auto object-cover transition-all duration-300 group-hover:scale-105"
+                className="w-full h-auto object-contain transition-all duration-300 group-hover:scale-105"
                 quality="medium"
                 lazy={true}
               />

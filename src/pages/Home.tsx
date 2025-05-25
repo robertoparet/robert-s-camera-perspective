@@ -4,10 +4,9 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { ImageContext } from '../context/context';
-import OptimizedImage from '../components/OptimizedImage';
-import VirtualGallery from '../components/VirtualGallery';
-import { useGalleryImageCache } from '../hooks/useImageCache';
-import { usePerformanceMonitor, PerformanceDebugger } from '../hooks/usePerformanceMonitor';
+import { OptimizedImage } from '../components/OptimizedImage';
+// import { useGalleryImageCache } from '../hooks/useImageCache';
+import { usePerformanceMonitor, PerformanceDebugger } from '../hooks/usePerformanceMonitor.tsx';
 import type { Image } from '../types/image';
 
 const ImageCard = memo(({ image, index, onImageClick }: { 
@@ -41,17 +40,24 @@ export function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('gallery');
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const navigate = useNavigate();
-    // Performance monitoring
-  const { metrics } = usePerformanceMonitor(images?.length || 0);// Initialize image cache for intelligent preloading
-  const imageUrls = images?.map(img => img.url) || [];
-  const { preloadSurroundingImages } = useGalleryImageCache(imageUrls, currentImageIndex);
-    // Preload surrounding images when lightbox opens or index changes
+  
+  // Performance monitoring
+  const { metrics } = usePerformanceMonitor(images?.length || 0);
+
+  // Initialize image cache for intelligent preloading - temporarily disabled
+  // const imageUrls = images?.map(img => img.url) || [];
+  // const { preloadSurroundingImages } = useGalleryImageCache(imageUrls, currentImageIndex);
+    
+  // Preload surrounding images when lightbox opens or index changes - temporarily disabled
+  /*
   useEffect(() => {
     if (lightboxOpen && imageUrls.length > 0) {
       preloadSurroundingImages();
     }
   }, [lightboxOpen, currentImageIndex, preloadSurroundingImages, imageUrls.length]);
+  */
   
   // Force refresh of albums data when switching to albums view
   useEffect(() => {
@@ -59,12 +65,17 @@ export function Home() {
       loadAlbums();
     }
   }, [viewMode, loadAlbums]);
-  
-  useEffect(() => {
+    useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
         event.preventDefault();
         navigate('/admin');
+      }
+      
+      // Toggle performance monitor with Ctrl+M
+      if (event.ctrlKey && event.code === 'KeyM') {
+        event.preventDefault();
+        setShowPerformanceMonitor(prev => !prev);
       }
     };
 
@@ -145,51 +156,39 @@ export function Home() {
                   Volver a Álbumes
                 </button>
               </div>            )}
-            
-            {/* Use virtual gallery for large collections, regular grid for smaller ones */}
-            {images && images.length > 50 ? (
-              <div className="h-[80vh]">
-                <VirtualGallery
-                  images={images}
-                  onImageClick={handleImageClick}
-                  itemsPerRow={4}
-                  itemHeight={280}
-                />
-              </div>
-            ) : (
-              <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 [column-fill:_balance] box-border min-h-[60vh]">
-                {images?.map((image, index) => (
-                  <div key={image.id} className="break-inside-avoid mb-6">
-                    <ImageCard
-                      image={image}
-                      index={index}
-                      onImageClick={handleImageClick}
-                    />
-                  </div>
-                ))}
+              {/* Use columnar layout for natural aspect ratios */}
+            <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 [column-fill:_balance] box-border min-h-[60vh]">
+              {images?.map((image, index) => (
+                <div key={image.id} className="break-inside-avoid mb-6">
+                  <ImageCard
+                    image={image}
+                    index={index}
+                    onImageClick={handleImageClick}
+                  />
+                </div>
+              ))}
 
-                {(!images || images.length === 0) && (
-                  <div className="col-span-full min-h-[60vh] flex flex-col items-center justify-center text-mono-400">
-                    <svg
-                      className="w-24 h-24 mb-6 opacity-30"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <p className="text-2xl font-medium text-mono-300">
-                      {currentAlbumId ? 'Este álbum está vacío' : 'No hay imágenes'}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+              {(!images || images.length === 0) && (
+                <div className="col-span-full min-h-[60vh] flex flex-col items-center justify-center text-mono-400">
+                  <svg
+                    className="w-24 h-24 mb-6 opacity-30"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <p className="text-2xl font-medium text-mono-300">
+                    {currentAlbumId ? 'Este álbum está vacío' : 'No hay imágenes'}
+                  </p>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
@@ -287,11 +286,9 @@ export function Home() {
           buttonPrev: () => null,
           buttonNext: () => null,
           buttonZoom: () => null,
-          iconZoomIn: () => null
-        }}      />
-      
-      {/* Performance monitoring in development */}
-      <PerformanceDebugger metrics={metrics} />
+          iconZoomIn: () => null        }}      />
+        {/* Performance monitoring in development */}
+      <PerformanceDebugger metrics={metrics} visible={showPerformanceMonitor} />
     </>
   );
 }

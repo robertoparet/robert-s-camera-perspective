@@ -27,8 +27,7 @@ export function ImageGrid() {
               </div>
             ))
           ) : images.length > 0 ? (
-            images.map((image: Image, index: number) => (
-              <div 
+            images.map((image: Image, index: number) => (              <div 
                 key={image.id} 
                 className="group relative bg-gray-800/30 rounded-xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
                 onClick={() => {
@@ -36,11 +35,11 @@ export function ImageGrid() {
                   setOpen(true);
                 }}
               >
-                <div className="relative pt-[100%]">
+                <div className="relative">
                   <img
                     src={image.url}
                     alt={image.titulo}
-                    className="absolute inset-0 w-full h-full object-contain bg-black/20"
+                    className="w-full h-auto object-contain bg-black/20 rounded-xl"
                     loading="lazy"
                   />
                 </div>
