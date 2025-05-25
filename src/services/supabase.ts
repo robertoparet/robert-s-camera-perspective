@@ -58,9 +58,7 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
     if (error) {
       console.error('Supabase query error:', error);
       throw error;
-    }
-
-    console.log('Fetched images:', { count, imageCount: data?.length });
+    }    console.log('Fetched images:', { count, imageCount: data?.length });
     return {
       images: data || [],
       totalCount: count || 0
@@ -120,6 +118,7 @@ export async function getAlbums() {
     console.error('Error fetching albums:', error);
     throw error;
   }
+  
   return data || [];
 }
 
