@@ -122,7 +122,6 @@ export function ImageProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const totalPages = Math.ceil(totalImages / pageSize);
-
   const contextValue = {
     images,
     albums,

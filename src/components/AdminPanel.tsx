@@ -11,8 +11,7 @@ export function AdminPanel() {
   const [title, setTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState('');
-  const [newAlbumName, setNewAlbumName] = useState('');
+  const [error, setError] = useState('');  const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDescription, setNewAlbumDescription] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,8 +74,7 @@ export function AdminPanel() {
         await deleteAlbum(albumId);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Error al eliminar el álbum');
-      }
-    }
+      }    }
   };
 
   const handleImageAlbumUpdate = async (imageId: string, albumId: string | null) => {
