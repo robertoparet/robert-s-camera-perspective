@@ -21,7 +21,7 @@ export interface GalleryImage {
   titulo: string;
   fecha_subida: string;
   album_id?: string | null;
-  user_id: string;
+  user_id?: string;
 }
 
 export async function signIn(email: string, password: string) {
@@ -77,15 +77,13 @@ export async function addImage(title: string, url: string, albumId?: string) {
   if (!session) {
     throw new Error('No authenticated session found');
   }
-
   const { data, error } = await supabase
     .from('imagenes')
     .insert([{ 
       titulo: title, 
       url: url,
       fecha_subida: new Date().toISOString(),
-      album_id: albumId || null,
-      user_id: session.user.id
+      album_id: albumId || null
     }])
     .select()
     .single();
@@ -131,14 +129,12 @@ export async function addAlbum(nombre: string, descripcion?: string) {
   if (!session) {
     throw new Error('No authenticated session found');
   }
-
   const { data, error } = await supabase
     .from('albumes')
     .insert([{
       nombre,
       descripcion,
-      fecha_creacion: new Date().toISOString(),
-      user_id: session.user.id
+      fecha_creacion: new Date().toISOString()
     }])
     .select()
     .single();

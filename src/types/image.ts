@@ -3,7 +3,7 @@ export interface Album {
   nombre: string;
   descripcion?: string;
   fecha_creacion: string;
-  user_id: string;
+  user_id?: string;
 }
 
 export interface Image {
@@ -14,7 +14,7 @@ export interface Image {
   file?: File;
   publicId?: string;
   album_id?: string | null;
-  user_id: string;
+  user_id?: string;
 }
 
 export interface ImageContextType {
