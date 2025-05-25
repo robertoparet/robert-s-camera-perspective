@@ -23,10 +23,13 @@ export function ImageProvider({ children }: { children: ReactNode }) {
 
   const loadAlbums = useCallback(async () => {
     try {
+      console.log('Loading albums...');
       const albumsData = await getAlbums();
+      console.log('Albums loaded:', albumsData?.length);
       setAlbums(albumsData);
     } catch (error) {
       console.error('Error loading albums:', error);
+      setAlbums([]);
     }
   }, []);
 
@@ -135,7 +138,9 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     pageSize,
     totalImages,
     filterByAlbum,
-    currentAlbumId
+    currentAlbumId,
+    loadAlbums,
+    loadImages
   };
 
   return (

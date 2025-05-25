@@ -32,11 +32,19 @@ const ImageCard = memo(({ image, index, onImageClick }: {
 ));
 
 export function Home() {
-  const { images, loading, albums, filterByAlbum, currentAlbumId } = useContext(ImageContext);
+  const { images, loading, albums, filterByAlbum, currentAlbumId, loadAlbums } = useContext(ImageContext);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('gallery');
   const navigate = useNavigate();
+  
+  // Force refresh of albums data when switching to albums view
+  useEffect(() => {
+    if (viewMode === 'albums') {
+      loadAlbums();
+    }
+  }, [viewMode, loadAlbums]);
+  
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
@@ -53,6 +61,13 @@ export function Home() {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   }, []);
+  
+  // Handle going back to album view - reloads albums to ensure count is correct
+  const handleBackToAlbums = useCallback(() => {
+    setViewMode('albums');
+    filterByAlbum(null);
+    loadAlbums();
+  }, [filterByAlbum, loadAlbums]);
 
   if (loading) {
     return (
@@ -85,7 +100,10 @@ export function Home() {
               Galería
             </button>
             <button
-              onClick={() => setViewMode('albums')}
+              onClick={() => {
+                setViewMode('albums');
+                loadAlbums(); // Force reload of albums when switching to albums view
+              }}
               className={`px-4 py-2 text-sm font-medium ${
                 viewMode === 'albums'
                   ? 'bg-purple-600 text-white'
@@ -125,14 +143,46 @@ export function Home() {
                   />
                 </svg>
                 <p className="text-2xl font-medium text-mono-300">
-                  {currentAlbumId ? 'Este álbum está vacío' : 'No hay imágenes'}
+                  {currentAlbumId ? (
+                    <>
+                      Este álbum está vacío
+                      <button
+                        onClick={() => {
+                          setViewMode('albums');
+                          filterByAlbum(null);
+                          loadAlbums(); // Force reload albums when going back
+                        }}
+                        className="block mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors"
+                      >
+                        Volver a álbumes
+                      </button>
+                    </>
+                  ) : (
+                    'No hay imágenes'
+                  )}
                 </p>
+              </div>
+            )}
+            
+            {currentAlbumId && (
+              <div className="sticky bottom-6 left-0 w-full flex justify-center">
+                <button
+                  onClick={() => {
+                    setViewMode('albums');
+                    filterByAlbum(null);
+                    loadAlbums(); // Force reload albums when going back
+                  }}
+                  className="px-4 py-2 bg-mono-800 hover:bg-mono-700 text-mono-100 rounded-full shadow-lg transition-all"
+                >
+                  Volver a álbumes
+                </button>
               </div>
             )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-            {albums.map(album => {
+            {albums && albums.length > 0 ? albums.map(album => {
+              // Calculate images for each album every time to ensure counts are correct
               const albumImages = images.filter(img => img.album_id === album.id);
               const coverImage = albumImages[0];
               
@@ -182,13 +232,17 @@ export function Home() {
                   </div>
                 </div>
               );
-            })}
-
-            {albums.length === 0 && (
+            }) : (
               <div className="col-span-full min-h-[60vh] flex flex-col items-center justify-center text-mono-400">
                 <p className="text-2xl font-medium text-mono-300">
                   No hay álbumes
                 </p>
+                <button 
+                  onClick={loadAlbums}
+                  className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors"
+                >
+                  Recargar álbumes
+                </button>
               </div>
             )}
           </div>

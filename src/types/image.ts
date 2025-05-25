@@ -33,4 +33,6 @@ export interface ImageContextType {
   totalImages: number;
   filterByAlbum: (albumId: string | null) => void;
   currentAlbumId: string | null;
+  loadAlbums: () => Promise<void>;
+  loadImages: () => Promise<void>;
 }

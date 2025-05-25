@@ -113,22 +113,23 @@ export async function deleteImage(id: string) {
 }
 
 export async function getAlbums() {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session) {
-    throw new Error('No authenticated session found');
-  }
+  try {
+    const { data, error } = await supabase
+      .from('albumes')
+      .select('*')
+      .order('fecha_creacion', { ascending: false });
 
-  const { data, error } = await supabase
-    .from('albumes')
-    .select('*')
-    .order('fecha_creacion', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching albums:', error);
-    throw error;
+    if (error) {
+      console.error('Error fetching albums:', error);
+      throw error;
+    }
+    
+    console.log('Fetched albums:', data?.length);
+    return data || [];
+  } catch (error) {
+    console.error('Error in getAlbums:', error);
+    return [];
   }
-  return data;
 }
 
 export async function addAlbum(nombre: string, descripcion?: string) {
