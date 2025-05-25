@@ -2,7 +2,7 @@ import { useState, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ImageContext } from '../context/context';
 import { uploadImage } from '../services/cloudinary';
-import type { Image, Album } from '../types/image';
+import type { Image } from '../types/image';
 
 type AdminView = 'upload' | 'classification';
 
@@ -11,11 +11,9 @@ export function AdminPanel() {
   const [title, setTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState('');
-  const [newAlbumName, setNewAlbumName] = useState('');
+  const [error, setError] = useState('');  const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDescription, setNewAlbumDescription] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('');
-  const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { 
@@ -79,8 +77,7 @@ export function AdminPanel() {
       }
     }
   };
-
-  const handleImageAlbumUpdate = async (imageId: string, albumId: string) => {
+  const handleImageAlbumUpdate = async (imageId: string, albumId: string | null) => {
     try {
       await updateImageAlbum(imageId, albumId === 'none' ? null : albumId);
     } catch (error) {

@@ -17,6 +17,8 @@ export interface ImageContextType {
   totalImages: number;
   filterByAlbum: (albumId: string | null) => void;
   currentAlbumId: string | null;
+  loadAlbums: () => Promise<void>;
+  loadImages: () => Promise<void>;
 }
 
 export const ImageContext = createContext<ImageContextType>({
@@ -38,5 +40,7 @@ export const ImageContext = createContext<ImageContextType>({
   pageSize: 12,
   totalImages: 0,
   filterByAlbum: () => {},
-  currentAlbumId: null
+  currentAlbumId: null,
+  loadAlbums: async () => {},
+  loadImages: async () => {}
 });

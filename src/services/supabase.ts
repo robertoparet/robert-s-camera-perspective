@@ -21,6 +21,7 @@ export interface GalleryImage {
   titulo: string;
   fecha_subida: string;
   album_id?: string | null;
+  user_id: string;
 }
 
 export async function signIn(email: string, password: string) {
@@ -83,7 +84,8 @@ export async function addImage(title: string, url: string, albumId?: string) {
       titulo: title, 
       url: url,
       fecha_subida: new Date().toISOString(),
-      album_id: albumId || null
+      album_id: albumId || null,
+      user_id: session.user.id
     }])
     .select()
     .single();
@@ -111,12 +113,6 @@ export async function deleteImage(id: string) {
 }
 
 export async function getAlbums() {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session) {
-    throw new Error('No authenticated session found');
-  }
-
   const { data, error } = await supabase
     .from('albumes')
     .select('*')
@@ -126,7 +122,7 @@ export async function getAlbums() {
     console.error('Error fetching albums:', error);
     throw error;
   }
-  return data;
+  return data || [];
 }
 
 export async function addAlbum(nombre: string, descripcion?: string) {
@@ -141,7 +137,8 @@ export async function addAlbum(nombre: string, descripcion?: string) {
     .insert([{
       nombre,
       descripcion,
-      fecha_creacion: new Date().toISOString()
+      fecha_creacion: new Date().toISOString(),
+      user_id: session.user.id
     }])
     .select()
     .single();
