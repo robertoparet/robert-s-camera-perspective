@@ -164,10 +164,8 @@ export function Home() {
                     {currentAlbumId ? 'Este álbum está vacío' : 'No hay imágenes'}
                   </p>
                 </div>
-              )}
-            </div>
+              )}            </div>
           </>
-        )
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {albums && albums.length > 0 ? albums.map(album => {
