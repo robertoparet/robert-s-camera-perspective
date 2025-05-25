@@ -243,14 +243,13 @@ export function Home() {
         styles={{
           container: { backgroundColor: "rgba(10, 10, 10, 0.98)" },
           root: { "--yarl__color_backdrop": "rgba(10, 10, 10, 0.98)" }
-        }}
-        zoom={{
-          maxZoomPixelRatio: 8,
-          zoomInMultiplier: 2,
+        }}        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 1.25,
           doubleTapDelay: 300,
           keyboardMoveDistance: 50,
-          wheelZoomDistanceFactor: 100,
-          pinchZoomDistanceFactor: 100,
+          wheelZoomDistanceFactor: 200,
+          pinchZoomDistanceFactor: 300,
           scrollToZoom: true
         }}
         carousel={{

@@ -89,12 +89,13 @@ export function ImageGrid() {
         styles={{
           container: { backgroundColor: "rgba(0, 0, 0, .95)" },
           root: { "--yarl__color_backdrop": "rgba(0, 0, 0, .95)" }
-        }}
-        zoom={{
-          maxZoomPixelRatio: 5,
-          zoomInMultiplier: 1.5,
+        }}        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 1.25,
           doubleTapDelay: 300,
           doubleClickDelay: 300,
+          wheelZoomDistanceFactor: 200,
+          pinchZoomDistanceFactor: 300,
           scrollToZoom: true
         }}
         render={{
