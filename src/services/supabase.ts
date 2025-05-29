@@ -45,7 +45,7 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
     
     let query = supabase
       .from('imagenes')
-      .select('id, url, titulo, fecha_subida, album_id', { count: 'exact' }); // Only select needed fields
+      .select('*', { count: 'exact' });
 
     if (albumId) {
       query = query.eq('album_id', albumId);
@@ -58,8 +58,7 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
     if (error) {
       console.error('Supabase query error:', error);
       throw error;
-    }
-
+    }    console.log('Fetched images:', { count, imageCount: data?.length });
     return {
       images: data || [],
       totalCount: count || 0
@@ -67,36 +66,6 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
   } catch (error) {
     console.error('Error in getImages:', error);
     throw error;
-  }
-}
-
-// New function to preload next page of images
-export async function preloadNextPage(page: number, pageSize = 12, albumId?: string | null) {
-  try {
-    const nextPage = page + 1;
-    const from = (nextPage - 1) * pageSize;
-    
-    let query = supabase
-      .from('imagenes')
-      .select('url'); // Only select URLs for preloading
-
-    if (albumId) {
-      query = query.eq('album_id', albumId);
-    }
-
-    const { data, error } = await query
-      .order('fecha_subida', { ascending: false })
-      .range(from, from + pageSize - 1);
-
-    if (error) {
-      console.error('Error preloading images:', error);
-      return [];
-    }
-
-    return data?.map(img => img.url) || [];
-  } catch (error) {
-    console.error('Error in preloadNextPage:', error);
-    return [];
   }
 }
 
@@ -211,6 +180,53 @@ export async function updateImageAlbum(imageId: string, albumId: string | null) 
     .from('imagenes')
     .update({ album_id: albumId })
     .eq('id', imageId);
+
+  if (error) throw error;
+}
+
+export async function updateImageTitle(imageId: string, newTitle: string) {
+  console.log('🔧 updateImageTitle called with:', { imageId, newTitle });
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    console.error('❌ No authenticated session found');
+    throw new Error('No authenticated session found');
+  }
+
+  console.log('✅ Session found, updating image title...');
+  
+  const { data, error } = await supabase
+    .from('imagenes')
+    .update({ titulo: newTitle })
+    .eq('id', imageId)
+    .select();
+
+  if (error) {
+    console.error('❌ Supabase update error:', error);
+    throw error;
+  }
+
+  console.log('✅ Image title updated successfully:', data);
+  return data;
+}
+
+export async function updateAlbumName(albumId: string, newName: string, newDescription?: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  const updateData: { nombre: string; descripcion?: string } = { nombre: newName };
+  if (newDescription !== undefined) {
+    updateData.descripcion = newDescription;
+  }
+
+  const { error } = await supabase
+    .from('albumes')
+    .update(updateData)
+    .eq('id', albumId);
 
   if (error) throw error;
 }
