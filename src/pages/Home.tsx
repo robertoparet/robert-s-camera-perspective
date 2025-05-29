@@ -5,8 +5,6 @@ import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { ImageContext } from '../context/context';
 import { OptimizedImage } from '../components/OptimizedImage';
-// import { useGalleryImageCache } from '../hooks/useImageCache';
-import { usePerformanceMonitor, PerformanceDebugger } from '../hooks/usePerformanceMonitor.tsx';
 import type { Image } from '../types/image';
 
 const ImageCard = memo(({ image, index, onImageClick }: { 
@@ -38,13 +36,8 @@ const ImageCard = memo(({ image, index, onImageClick }: {
 export function Home() {
   const { images, loading, albums, filterByAlbum, currentAlbumId, loadAlbums } = useContext(ImageContext);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('gallery');
-  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);  const [viewMode, setViewMode] = useState<'gallery' | 'albums'>('albums');
   const navigate = useNavigate();
-  
-  // Performance monitoring
-  const { metrics } = usePerformanceMonitor(images?.length || 0);
 
   // Initialize image cache for intelligent preloading - temporarily disabled
   // const imageUrls = images?.map(img => img.url) || [];
@@ -66,16 +59,9 @@ export function Home() {
     }
   }, [viewMode, loadAlbums]);
     useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
+    const handleKeyPress = (event: KeyboardEvent) => {      if (event.ctrlKey && (event.code === 'Space' || event.code === 'Enter')) {
         event.preventDefault();
         navigate('/admin');
-      }
-      
-      // Toggle performance monitor with Ctrl+M
-      if (event.ctrlKey && event.code === 'KeyM') {
-        event.preventDefault();
-        setShowPerformanceMonitor(prev => !prev);
       }
     };
 
@@ -86,14 +72,15 @@ export function Home() {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   }, []);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     );
-  }  return (
+  }
+
+  return (
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -102,6 +89,19 @@ export function Home() {
           </h1>
 
           <div className="flex rounded-lg overflow-hidden bg-mono-800">
+                <button
+              onClick={() => {
+                setViewMode('albums');
+                loadAlbums(); // Force reload of albums when switching to albums view
+              }}
+              className={`px-4 py-2 text-sm font-medium ${
+                viewMode === 'albums'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-mono-300 hover:text-white hover:bg-mono-700'
+              } transition-colors duration-300`}
+            >
+              Álbumes
+            </button>
             <button
               onClick={() => {
                 setViewMode('gallery');
@@ -115,19 +115,7 @@ export function Home() {
             >
               Galería
             </button>
-            <button
-              onClick={() => {
-                setViewMode('albums');
-                loadAlbums(); // Force reload of albums when switching to albums view
-              }}
-              className={`px-4 py-2 text-sm font-medium ${
-                viewMode === 'albums'
-                  ? 'bg-purple-600 text-white'
-                  : 'text-mono-300 hover:text-white hover:bg-mono-700'
-              } transition-colors duration-300`}
-            >
-              Álbumes
-            </button>
+        
           </div>
         </div>
 
@@ -287,8 +275,6 @@ export function Home() {
           buttonNext: () => null,
           buttonZoom: () => null,
           iconZoomIn: () => null        }}      />
-        {/* Performance monitoring in development */}
-      <PerformanceDebugger metrics={metrics} visible={showPerformanceMonitor} />
-    </>
+        {/* Performance monitoring in development */}    </>
   );
 }

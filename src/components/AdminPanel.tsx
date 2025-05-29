@@ -11,20 +11,48 @@ export function AdminPanel() {
   const [title, setTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState('');  const [newAlbumName, setNewAlbumName] = useState('');
+  const [error, setError] = useState('');
+  const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDescription, setNewAlbumDescription] = useState('');
-  const [selectedAlbum, setSelectedAlbum] = useState<string>('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedAlbum, setSelectedAlbum] = useState<string>('');  // Edit states for images
+  const [editingImageId, setEditingImageId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
   
-  const { 
+  // Edit states for albums
+  const [editingAlbumId, setEditingAlbumId] = useState<string | null>(null);
+  const [editAlbumName, setEditAlbumName] = useState('');
+  const [editAlbumDescription, setEditAlbumDescription] = useState('');
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const contextValue = useContext(ImageContext);
+  
+  // Debug: Check the entire context first
+  console.log('Full context value:', contextValue);
+  console.log('updateImageTitle in context:', contextValue.updateImageTitle);
+  console.log('typeof updateImageTitle in context:', typeof contextValue.updateImageTitle);
+    const { 
     addImage, 
     images, 
     deleteImage, 
     albums, 
     addAlbum, 
     deleteAlbum, 
-    updateImageAlbum 
-  } = useContext(ImageContext);
+    updateImageAlbum,
+    updateAlbumName
+  } = contextValue;
+  
+  // Get updateImageTitle directly from context to avoid destructuring issues
+  const updateImageTitle = contextValue.updateImageTitle;
+  // Debug: Check what functions are available
+  console.log('AdminPanel context functions:', {
+    addImage: typeof addImage,
+    deleteImage: typeof deleteImage,
+    updateImageAlbum: typeof updateImageAlbum,
+    updateImageTitle: typeof updateImageTitle
+  });
+  
+  console.log('Full contextValue:', contextValue);
+  console.log('updateImageTitle function:', updateImageTitle);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,13 +104,66 @@ export function AdminPanel() {
         setError(error instanceof Error ? error.message : 'Error al eliminar el álbum');
       }    }
   };
-
   const handleImageAlbumUpdate = async (imageId: string, albumId: string | null) => {
     try {
       await updateImageAlbum(imageId, albumId);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error al actualizar el álbum de la imagen');
     }
+  };
+  // Album editing functions
+  const handleEditAlbum = (album: { id: string; nombre: string; descripcion?: string }) => {
+    setEditingAlbumId(album.id);
+    setEditAlbumName(album.nombre);
+    setEditAlbumDescription(album.descripcion || '');
+  };
+
+  const handleSaveAlbumName = async (albumId: string) => {
+    console.log('💾 Saving album changes:', { albumId, editAlbumName, editAlbumDescription });
+    
+    // Confirmación antes de guardar
+    const shouldSave = window.confirm(
+      `¿Estás seguro de que quieres guardar los cambios en el álbum?\n\nNombre: "${editAlbumName}"\nDescripción: "${editAlbumDescription}"`
+    );
+    
+    if (!shouldSave) {
+      console.log('❌ Save cancelled by user');
+      return;
+    }
+    
+    console.log('✅ User confirmed, proceeding with save...');
+    console.log('contextValue.updateAlbumName:', contextValue.updateAlbumName);
+    console.log('typeof contextValue.updateAlbumName:', typeof contextValue.updateAlbumName);
+    
+    if (!updateAlbumName) {
+      console.error('❌ updateAlbumName function not available in context');
+      setError('La función de actualización de álbumes no está disponible');
+      return;
+    }
+    
+    try {
+      const updateFn = contextValue.updateAlbumName;
+      console.log('🔧 About to call updateAlbumName with:', { albumId, editAlbumName, editAlbumDescription });
+      console.log('🔧 Update function type:', typeof updateFn);
+      
+      await updateFn(albumId, editAlbumName, editAlbumDescription);
+      console.log('✅ Album updated successfully');
+      
+      // Reset edit state
+      setEditingAlbumId(null);
+      setEditAlbumName('');
+      setEditAlbumDescription('');
+      setError('');
+    } catch (error) {
+      console.error('❌ Error updating album:', error);
+      setError(error instanceof Error ? error.message : 'Error al actualizar el álbum');
+    }
+  };
+
+  const handleCancelAlbumEdit = () => {
+    setEditingAlbumId(null);
+    setEditAlbumName('');
+    setEditAlbumDescription('');
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +195,47 @@ export function AdminPanel() {
     if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
       deleteImage(image.id);
     }
+  };
+
+  // Edit handlers
+  const handleEditImage = (image: Image) => {
+    setEditingImageId(image.id);
+    setEditTitle(image.titulo);
+  };  const handleSaveImageTitle = async () => {
+    if (!editingImageId || !editTitle.trim()) return;
+    
+    console.log('Saving image title:', { editingImageId, editTitle: editTitle.trim() });
+    console.log('updateImageTitle function before call:', updateImageTitle);
+    console.log('typeof updateImageTitle:', typeof updateImageTitle);
+    console.log('contextValue.updateImageTitle:', contextValue.updateImageTitle);
+    console.log('typeof contextValue.updateImageTitle:', typeof contextValue.updateImageTitle);
+    
+    // Confirmación antes de guardar
+    if (!confirm('¿Estás seguro de que quieres guardar estos cambios en el título?')) return;
+    
+    try {
+      console.log('Calling updateImageTitle...');
+      
+      // Use the function directly from context to avoid any destructuring issues
+      const updateFn = contextValue.updateImageTitle;
+      if (typeof updateFn !== 'function') {
+        console.error('❌ updateImageTitle is not a function:', updateFn);
+        throw new Error(`updateImageTitle is not a function, it's ${typeof updateFn}`);
+      }
+      
+      await updateFn(editingImageId, editTitle.trim());
+      console.log('Image title updated successfully');
+      setEditingImageId(null);
+      setEditTitle('');
+    } catch (error) {
+      console.error('Error updating image title:', error);
+      setError('Error al actualizar el título de la imagen');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingImageId(null);
+    setEditTitle('');
   };
 
   return (
@@ -270,9 +392,19 @@ export function AdminPanel() {
                           alt={image.titulo}
                           className="w-full h-full object-cover"
                         />
-                      </div>
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      </div>                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="absolute top-2 right-2 flex gap-2">
+                          {/* BOTÓN DE EDITAR */}
+                          <button
+                            onClick={() => handleEditImage(image)}
+                            className="p-2 bg-blue-600/80 text-white rounded-lg hover:bg-blue-700/80 transition-colors"
+                            title="Editar título"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                          {/* BOTÓN DE ELIMINAR */}
                           <button
                             onClick={() => handleDelete(image)}
                             className="p-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors"
@@ -281,11 +413,37 @@ export function AdminPanel() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>
-                        </div>
-                        <div className="absolute bottom-2 left-2 right-2 p-2 bg-black/40 backdrop-blur-sm rounded-lg">
-                          <h4 className="text-white text-sm font-medium mb-2">
-                            {image.titulo}
-                          </h4>
+                        </div>                        <div className="absolute bottom-2 left-2 right-2 p-2 bg-black/40 backdrop-blur-sm rounded-lg">
+                          {editingImageId === image.id ? (
+                            <div className="space-y-2">
+                              <input
+                                type="text"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                className="w-full px-2 py-1 text-sm bg-gray-700/50 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Título de la imagen"
+                                autoFocus
+                              />
+                              <div className="flex gap-1 justify-end">
+                                <button
+                                  onClick={handleSaveImageTitle}
+                                  className="px-2 py-1 bg-green-600/80 text-white rounded-md hover:bg-green-700/80 transition-colors text-xs"
+                                >
+                                  Guardar
+                                </button>
+                                <button
+                                  onClick={handleCancelEdit}
+                                  className="px-2 py-1 bg-gray-600/80 text-white rounded-md hover:bg-gray-700/80 transition-colors text-xs"
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <h4 className="text-white text-sm font-medium mb-2">
+                              {image.titulo}
+                            </h4>
+                          )}
                           <select
                             value={image.album_id || ''}
                             onChange={(e) => handleImageAlbumUpdate(image.id, e.target.value)}
@@ -341,25 +499,77 @@ export function AdminPanel() {
                       Añadir Álbum
                     </button>
                   </div>
-                </form>
-
-                <div className="grid grid-cols-1 gap-4">
+                </form>                <div className="grid grid-cols-1 gap-4">
                   {albums.map((album) => (
                     <div
                       key={album.id}
                       className="bg-gray-700/50 rounded-lg p-4"
                     >
                       <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="text-white font-medium text-lg">{album.nombre}</h4>
-                          {album.descripcion && (
-                            <p className="text-gray-400 text-sm mt-1">{album.descripcion}</p>
+                        <div className="flex-1 mr-4">
+                          {editingAlbumId === album.id ? (
+                            <div className="space-y-3">
+                              <input
+                                type="text"
+                                value={editAlbumName}
+                                onChange={(e) => setEditAlbumName(e.target.value)}
+                                className="w-full px-3 py-2 bg-gray-600/50 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"
+                                placeholder="Nombre del álbum"
+                                autoFocus
+                              />
+                              <textarea
+                                value={editAlbumDescription}
+                                onChange={(e) => setEditAlbumDescription(e.target.value)}
+                                className="w-full px-3 py-2 bg-gray-600/50 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none resize-none"
+                                placeholder="Descripción (opcional)"
+                                rows={2}
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleSaveAlbumName(album.id)}
+                                  className="px-3 py-1 bg-green-600/80 text-white rounded-md hover:bg-green-700/80 transition-colors text-sm flex items-center gap-1"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  Guardar
+                                </button>
+                                <button
+                                  onClick={handleCancelAlbumEdit}
+                                  className="px-3 py-1 bg-gray-600/80 text-white rounded-md hover:bg-gray-700/80 transition-colors text-sm flex items-center gap-1"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                  Cancelar
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <h4 className="text-white font-medium text-lg">{album.nombre}</h4>
+                              {album.descripcion && (
+                                <p className="text-gray-400 text-sm mt-1">{album.descripcion}</p>
+                              )}
+                            </div>
                           )}
                         </div>
                         <div className="flex gap-2">
+                          {editingAlbumId !== album.id && (
+                            <button
+                              onClick={() => handleEditAlbum(album)}
+                              className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                              title="Editar álbum"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDeleteAlbum(album.id)}
                             className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                            title="Eliminar álbum"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
