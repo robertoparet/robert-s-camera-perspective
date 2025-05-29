@@ -1,10 +1,6 @@
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { Image, Album } from '../types/image';
 import { ImageContext } from './context';
-
-console.log('🚨 CRITICAL: ImageContext.tsx file is being executed!');
-console.log('🚨 CRITICAL: This should appear if our file is running!');
-
 import {
   addImage as addImageToSupabase,
   getImages,
@@ -13,11 +9,14 @@ import {
   addAlbum as addAlbumToSupabase,
   deleteAlbum as deleteAlbumFromSupabase,
   updateImageAlbum as updateImageAlbumInSupabase,
-  supabase
+  updateImageTitle as updateImageTitleInSupabase,
+  updateAlbumName as updateAlbumNameInSupabase
 } from '../services/supabase';
 
+console.log('🆕 NEW FILE: ImageContext_NEW.tsx is executing!');
+
 export function ImageProvider({ children }: { children: ReactNode }) {
-  console.log('🚀 [INIT] ImageProvider loading...');
+  console.log('🆕 NEW ImageProvider starting...');
   
   const [images, setImages] = useState<Image[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -30,9 +29,9 @@ export function ImageProvider({ children }: { children: ReactNode }) {
 
   const loadAlbums = useCallback(async () => {
     try {
-      console.log('🔥🔥🔥 NUEVOS ALBUMES CARGANDO - ARCHIVO CORRECTO 🔥🔥🔥');
+      console.log('🆕 NEW Loading albums...');
       const albumsData = await getAlbums();
-      console.log('Albums loaded:', albumsData?.length);
+      console.log('🆕 NEW Albums loaded:', albumsData?.length);
       setAlbums(albumsData);
     } catch (error) {
       console.error('Error loading albums:', error);
@@ -93,7 +92,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     try {
       const newAlbum = await addAlbumToSupabase(nombre, descripcion);
       await loadAlbums();
-      return newAlbum;    } catch (error) {
+      return newAlbum;
+    } catch (error) {
       console.error('Error adding album:', error);
       throw error;
     }
@@ -105,7 +105,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       await loadAlbums();
       if (currentAlbumId === id) {
         setCurrentAlbumId(null);
-      }    } catch (error) {
+      }
+    } catch (error) {
       console.error('Error deleting album:', error);
       throw error;
     }
@@ -120,60 +121,23 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   }, [loadImages]);
+
+  // ⭐ CRITICAL: updateImageTitle function
   const updateImageTitle = useCallback(async (imageId: string, newTitle: string) => {
-    console.log('🔧 [NEW] updateImageTitle function called with:', { imageId, newTitle });
+    console.log('⭐ NEW updateImageTitle called:', { imageId, newTitle });
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        throw new Error('No authenticated session found');
-      }
-
-      const { data, error } = await supabase
-        .from('imagenes')
-        .update({ titulo: newTitle })
-        .eq('id', imageId)
-        .select();
-
-      if (error) {
-        console.error('❌ Supabase update error:', error);
-        throw error;
-      }
-
-      console.log('✅ Image title updated successfully:', data);
+      await updateImageTitleInSupabase(imageId, newTitle);
       await loadImages();
+      console.log('⭐ NEW updateImageTitle completed successfully');
     } catch (error) {
-      console.error('❌ [NEW] Error updating image title:', error);
+      console.error('❌ NEW updateImageTitle error:', error);
       throw error;
     }
   }, [loadImages]);
 
-  // Debug: Check updateImageTitle function after definition
-  console.log('🔧 [NEW] updateImageTitle defined:', {
-    typeof: typeof updateImageTitle,
-    function: updateImageTitle,
-    isFunction: typeof updateImageTitle === 'function'
-  });
   const updateAlbumName = useCallback(async (albumId: string, newName: string, newDescription?: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        throw new Error('No authenticated session found');
-      }
-
-      const updateData: { nombre: string; descripcion?: string } = { nombre: newName };
-      if (newDescription !== undefined) {
-        updateData.descripcion = newDescription;
-      }
-
-      const { error } = await supabase
-        .from('albumes')
-        .update(updateData)
-        .eq('id', albumId);
-
-      if (error) throw error;
-      
+      await updateAlbumNameInSupabase(albumId, newName, newDescription);
       await loadAlbums();
     } catch (error) {
       console.error('Error updating album name:', error);
@@ -188,14 +152,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
 
   const totalPages = Math.ceil(totalImages / pageSize);
   
-  // Debug: Check all functions before creating contextValue
-  console.log('🔧 [NEW] Before contextValue creation:', {
-    updateImageTitle: typeof updateImageTitle,
-    updateImageTitleFunction: updateImageTitle,
-    updateImageAlbum: typeof updateImageAlbum,
-    addImage: typeof addImage,
-    deleteImage: typeof deleteImage
-  });
+  console.log('⭐ NEW updateImageTitle defined as:', typeof updateImageTitle);
   
   const contextValue = {
     images,
@@ -216,15 +173,10 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     filterByAlbum,
     currentAlbumId,
     loadAlbums,
-    loadImages  };
+    loadImages
+  };
   
-  // ⚡ FINAL CHECK: Log exactly what's in contextValue
-  console.log('⚡ FINAL contextValue check:', {
-    hasUpdateImageTitle: 'updateImageTitle' in contextValue,
-    updateImageTitleType: typeof contextValue.updateImageTitle,
-    updateImageTitleValue: contextValue.updateImageTitle,
-    allKeys: Object.keys(contextValue)
-  });
+  console.log('⭐ NEW contextValue updateImageTitle:', typeof contextValue.updateImageTitle);
 
   return (
     <ImageContext.Provider value={contextValue}>
