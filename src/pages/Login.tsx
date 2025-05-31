@@ -90,51 +90,46 @@ export function Login() {
 
   return session ? (
     <Navigate to="/admin" replace />
-  ) : (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8 p-8 bg-gray-800/30 backdrop-blur-sm rounded-xl shadow-2xl">
+  ) : (    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
+      <div className="max-w-md w-full space-y-8 p-8 bg-gray-200 shadow-2xl">
         <div>
-          <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold text-center text-gray-800">
             Admin Login
           </h2>
-          <p className="mt-2 text-center text-gray-400">
+          <p className="mt-2 text-center text-gray-600">
             Sign in to access the admin panel
           </p>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
-            </label>
-            <input
+            </label>            <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isDisabled}
-              className="mt-1 block w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-gray-400 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
-            </label>
-            <input
+            </label>            <input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isDisabled}
-              className="mt-1 block w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-gray-400 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             />
-          </div>
-
-          {error && (
-            <div className="text-red-400 text-sm bg-red-900/20 px-4 py-2 rounded-lg">
+          </div>          {error && (
+            <div className="text-red-700 text-sm bg-red-100 px-4 py-2 border border-red-200">
               <p>{error}</p>
               {attempts > 0 && attempts < MAX_ATTEMPTS && (
                 <p className="mt-1 text-xs">
@@ -147,7 +142,7 @@ export function Login() {
           <button
             type="submit"
             disabled={isDisabled}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gray-700 text-white py-2 px-4 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

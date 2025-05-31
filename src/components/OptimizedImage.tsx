@@ -97,15 +97,14 @@ const OptimizedImage = memo(({
       observerRef.current?.disconnect();
     };
   }, [lazy]);
-
   if (hasError) {
     return (
       <div 
-        className={`bg-mono-800 flex items-center justify-center ${className}`}
+        className={`bg-gray-200 flex items-center justify-center ${className}`}
         onClick={onClick}
       >
         <svg
-          className="w-12 h-12 text-mono-500"
+          className="w-12 h-12 text-gray-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -122,14 +121,13 @@ const OptimizedImage = memo(({
   }
 
   return (
-    <div className={`relative overflow-hidden ${className}`} onClick={onClick}>
-      {/* Placeholder mientras carga */}
+    <div className={`relative overflow-hidden ${className}`} onClick={onClick}>      {/* Placeholder mientras carga */}
       {!isLoaded && (
-        <div className="absolute inset-0 bg-mono-800 animate-pulse flex items-center justify-center">
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
           {placeholder ? (
             <img src={placeholder} alt="" className="w-full h-full object-cover opacity-20" />
           ) : (
-            <div className="w-8 h-8 border-2 border-mono-600 border-t-purple-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 animate-spin" />
           )}
         </div>
       )}

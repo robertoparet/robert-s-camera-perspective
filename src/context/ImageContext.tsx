@@ -1,9 +1,6 @@
-import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
+import { useState, useEffect, ReactNode, useCallback, useRef, createContext } from 'react';
 import { Image, Album } from '../types/image';
-import { ImageContext } from './context';
-
-console.log('🚨 CRITICAL: ImageContext.tsx file is being executed!');
-console.log('🚨 CRITICAL: This should appear if our file is running!');
+import type { ImageContextType } from './context';
 
 import {
   addImage as addImageToSupabase,
@@ -13,14 +10,20 @@ import {
   addAlbum as addAlbumToSupabase,
   deleteAlbum as deleteAlbumFromSupabase,
   updateImageAlbum as updateImageAlbumInSupabase,
+  setCoverImage as setCoverImageInSupabase,
+  getCoverImage as getCoverImageFromSupabase,
+  getCoverImages as getCoverImagesFromSupabase,
+  removeCoverImage as removeCoverImageFromSupabase,
   supabase
 } from '../services/supabase';
 
+export const ImageContext = createContext<ImageContextType | null>(null);
+
 export function ImageProvider({ children }: { children: ReactNode }) {
-  console.log('🚀 [INIT] ImageProvider loading...');
-  
   const [images, setImages] = useState<Image[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [coverImage, setCoverImageState] = useState<Image | null>(null);
+  const [coverImages, setCoverImagesState] = useState<Image[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalImages, setTotalImages] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -30,23 +33,23 @@ export function ImageProvider({ children }: { children: ReactNode }) {
 
   const loadAlbums = useCallback(async () => {
     try {
-      console.log('🔥🔥🔥 NUEVOS ALBUMES CARGANDO - ARCHIVO CORRECTO 🔥🔥🔥');
       const albumsData = await getAlbums();
-      console.log('Albums loaded:', albumsData?.length);
       setAlbums(albumsData);
     } catch (error) {
       console.error('Error loading albums:', error);
       setAlbums([]);
     }
   }, []);
-
   const loadImages = useCallback(async () => {
     if (loadingRef.current) return;
     loadingRef.current = true;
     
     try {
       setLoading(true);
+      console.log('🔍 Loading images with:', { currentPage, pageSize, currentAlbumId });
       const { images: fetchedImages, totalCount } = await getImages(currentPage, pageSize, currentAlbumId);
+      
+      console.log('📸 Fetched images:', { count: fetchedImages?.length, totalCount });
       
       if (!Array.isArray(fetchedImages)) {
         console.error('ImageProvider: fetchedImages is not an array:', fetchedImages);
@@ -61,12 +64,50 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [currentPage, pageSize, currentAlbumId]);
-
+  }, [currentPage, pageSize, currentAlbumId]);const loadCoverImage = useCallback(async () => {
+    try {
+      const coverImg = await getCoverImageFromSupabase();
+      setCoverImageState(coverImg);
+    } catch (error) {
+      console.error('Error loading cover image:', error);
+      setCoverImageState(null);
+    }
+  }, []);
+  const loadCoverImages = useCallback(async () => {
+    try {
+      const coverImgs = await getCoverImagesFromSupabase(3);
+      setCoverImagesState(coverImgs);
+    } catch (error) {
+      console.error('Error loading cover images:', error);
+      setCoverImagesState([]);
+    }
+  }, []);
   useEffect(() => {
-    loadAlbums();
-    loadImages();
-  }, [loadAlbums, loadImages]);
+    console.log('🚀 ImageProvider useEffect triggered');
+    console.log('📋 Starting data loading...');
+    
+    const loadData = async () => {
+      try {
+        console.log('📁 Loading albums...');
+        await loadAlbums();
+        
+        console.log('🖼️ Loading images...');
+        await loadImages();
+        
+        console.log('🎯 Loading cover image...');
+        await loadCoverImage();
+        
+        console.log('📸 Loading cover images...');
+        await loadCoverImages();
+        
+        console.log('✅ All data loading completed');
+      } catch (error) {
+        console.error('❌ Error during data loading:', error);
+      }
+    };
+    
+    loadData();
+  }, [loadAlbums, loadImages, loadCoverImage, loadCoverImages]);
 
   const addImage = useCallback(async (title: string, url: string, albumId?: string) => {
     try {
@@ -83,17 +124,19 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     try {
       await deleteImageFromSupabase(id);
       await loadImages();
+      await loadCoverImage(); // Reload cover image in case it was deleted
     } catch (error) {
       console.error('Error deleting image:', error);
       throw error;
     }
-  }, [loadImages]);
+  }, [loadImages, loadCoverImage]);
 
   const addAlbum = useCallback(async (nombre: string, descripcion?: string) => {
     try {
       const newAlbum = await addAlbumToSupabase(nombre, descripcion);
       await loadAlbums();
-      return newAlbum;    } catch (error) {
+      return newAlbum;
+    } catch (error) {
       console.error('Error adding album:', error);
       throw error;
     }
@@ -105,7 +148,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       await loadAlbums();
       if (currentAlbumId === id) {
         setCurrentAlbumId(null);
-      }    } catch (error) {
+      }
+    } catch (error) {
       console.error('Error deleting album:', error);
       throw error;
     }
@@ -120,40 +164,30 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   }, [loadImages]);
+
   const updateImageTitle = useCallback(async (imageId: string, newTitle: string) => {
-    console.log('🔧 [NEW] updateImageTitle function called with:', { imageId, newTitle });
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         throw new Error('No authenticated session found');
-      }
-
-      const { data, error } = await supabase
+      }      const { error } = await supabase
         .from('imagenes')
         .update({ titulo: newTitle })
-        .eq('id', imageId)
-        .select();
+        .eq('id', imageId);
 
       if (error) {
         console.error('❌ Supabase update error:', error);
         throw error;
       }
 
-      console.log('✅ Image title updated successfully:', data);
       await loadImages();
     } catch (error) {
-      console.error('❌ [NEW] Error updating image title:', error);
+      console.error('❌ Error updating image title:', error);
       throw error;
     }
   }, [loadImages]);
 
-  // Debug: Check updateImageTitle function after definition
-  console.log('🔧 [NEW] updateImageTitle defined:', {
-    typeof: typeof updateImageTitle,
-    function: updateImageTitle,
-    isFunction: typeof updateImageTitle === 'function'
-  });
   const updateAlbumName = useCallback(async (albumId: string, newName: string, newDescription?: string) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -180,26 +214,48 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   }, [loadAlbums]);
+  const setCoverImage = useCallback(async (imageId: string) => {
+    try {
+      await setCoverImageInSupabase(imageId);
+      await loadCoverImage();
+      await loadCoverImages();
+      await loadImages(); // Reload to update UI state
+    } catch (error) {
+      console.error('Error setting cover image:', error);
+      throw error;
+    }
+  }, [loadCoverImage, loadCoverImages, loadImages]);
+  const removeCoverImage = useCallback(async (imageId: string) => {
+    try {
+      await removeCoverImageFromSupabase(imageId);
+      await loadCoverImage();
+      await loadCoverImages();
+      await loadImages(); // Reload to update UI state
+    } catch (error) {
+      console.error('Error removing cover image:', error);
+      throw error;
+    }
+  }, [loadCoverImage, loadCoverImages, loadImages]);
 
   const filterByAlbum = useCallback((albumId: string | null) => {
     setCurrentAlbumId(albumId);
     setCurrentPage(1);
   }, []);
-
   const totalPages = Math.ceil(totalImages / pageSize);
   
-  // Debug: Check all functions before creating contextValue
-  console.log('🔧 [NEW] Before contextValue creation:', {
-    updateImageTitle: typeof updateImageTitle,
-    updateImageTitleFunction: updateImageTitle,
-    updateImageAlbum: typeof updateImageAlbum,
-    addImage: typeof addImage,
-    deleteImage: typeof deleteImage
+  // Debug logs
+  console.log('ImageProvider Debug:', {
+    imagesLength: images.length,
+    coverImagesLength: coverImages.length,
+    loading,
+    albums: albums.length
   });
   
   const contextValue = {
     images,
     albums,
+    coverImage,
+    coverImages,
     addImage,
     deleteImage,
     addAlbum,
@@ -207,6 +263,10 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     updateImageAlbum,
     updateImageTitle,
     updateAlbumName,
+    setCoverImage,
+    removeCoverImage,
+    loadCoverImage,
+    loadCoverImages,
     currentPage,
     totalPages,
     loading,
@@ -217,13 +277,16 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     currentAlbumId,
     loadAlbums,
     loadImages  };
-  
-  // ⚡ FINAL CHECK: Log exactly what's in contextValue
-  console.log('⚡ FINAL contextValue check:', {
-    hasUpdateImageTitle: 'updateImageTitle' in contextValue,
-    updateImageTitleType: typeof contextValue.updateImageTitle,
-    updateImageTitleValue: contextValue.updateImageTitle,
-    allKeys: Object.keys(contextValue)
+
+  // Debug log para ver qué se está pasando al contexto
+  console.log('🔄 ImageContext providing:', {
+    imagesCount: images.length,
+    albumsCount: albums.length,
+    coverImage: !!coverImage,
+    coverImagesCount: coverImages.length,
+    loading,
+    currentPage,
+    totalImages
   });
 
   return (

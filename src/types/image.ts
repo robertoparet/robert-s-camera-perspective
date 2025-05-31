@@ -15,4 +15,5 @@ export interface Image {
   publicId?: string;
   album_id?: string | null;
   user_id?: string;
+  is_covered?: boolean;
 }
