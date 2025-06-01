@@ -101,14 +101,18 @@ body {
   width: 50% !important;
   height: 100vh !important;
   overflow: hidden !important;
-  background-color: #000 !important;
+  background-color: #000 !important; /* Vuelto a negro para mejor contraste con imagen */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-/* Estilo de la imagen - cinematográfico y elegante */
+/* Estilo de la imagen - llenar completamente la sección */
 .fullscreen-photo-container img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: cover !important; /* Cambio de contain a cover para llenar toda la sección */
+  object-position: center !important; /* Centrar la imagen */
   filter: 
     brightness(0.95) 
     contrast(1.05)
@@ -918,7 +922,6 @@ body {
     justify-content: center !important; /* Cambio de flex-end a center para centrar */
     padding: 1.5rem 1rem 2rem 1rem !important; /* Reducido padding superior */
   }
-  
   .fullscreen-photo-container {
     position: fixed !important;
     top: 0 !important;
@@ -928,6 +931,11 @@ body {
     height: 55vh !important; /* Aumentado de 45vh a 55vh para foto más prominente */
     max-height: 55vh !important;
     z-index: 1 !important;
+    background-color: #000 !important; /* Fondo negro para mejor contraste */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
   }
   /* Asegurar que los botones sean completamente visibles y MÁS GRANDES - COMPACTOS */
   .gallery-button {
@@ -993,9 +1001,13 @@ body {
     padding: 1.25rem 0.875rem 1.5rem 0.875rem !important; /* Padding más compacto */
     justify-content: center !important; /* Centrar contenido en su sección */
   }
-  
   .fullscreen-photo-container {
     height: 58vh !important; /* Aumentado significativamente para foto más prominente */
+    background-color: #000 !important; /* Fondo negro */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
   }
   
   .content-container h1 {
@@ -1036,9 +1048,13 @@ body {
     padding: 1rem 0.75rem 1.25rem 0.75rem !important; /* Padding muy compacto */
     justify-content: center !important; /* Centrar contenido en su sección */
   }
-  
   .fullscreen-photo-container {
     height: 60vh !important; /* Foto muy prominente en pantallas pequeñas */
+    background-color: #000 !important; /* Fondo negro */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
   }
   
   .content-container h1 {
