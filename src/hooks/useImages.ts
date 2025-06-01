@@ -4,7 +4,7 @@ import { deleteCloudinaryImage } from '../services/cloudinary';
 import type { Image } from '../types/image';
 import { ImageContext } from '../context/context';
 
-const PAGE_SIZE = 12;
+// Removido PAGE_SIZE para cargar todas las imágenes
 
 export function useImages() {
   const context = useContext(ImageContext);
@@ -15,22 +15,20 @@ export function useImages() {
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalImages, setTotalImages] = useState(0);
+  // Removido currentPage y totalImages ya que no usaremos paginación
   const isMounted = useRef(true);
   const fetchInProgress = useRef(false);
-
   const fetchImages = useCallback(async () => {
     if (fetchInProgress.current) return;
     
     try {
       fetchInProgress.current = true;
       setLoading(true);
-      const { images: fetchedImages, totalCount } = await getSupabaseImages(currentPage);
+      // Cargar todas las imágenes sin paginación
+      const { images: fetchedImages } = await getSupabaseImages();
       
       if (isMounted.current) {
         setImages(fetchedImages || []);
-        setTotalImages(totalCount || 0);
       }
     } catch (err) {
       if (isMounted.current) {
@@ -42,7 +40,7 @@ export function useImages() {
       }
       fetchInProgress.current = false;
     }
-  }, [currentPage]);
+  }, []); // Sin dependencias ya que no hay paginación
 
   useEffect(() => {
     isMounted.current = true;
@@ -100,17 +98,10 @@ export function useImages() {
     }
   }, [fetchImages]);
 
-  const totalPages = Math.ceil(totalImages / PAGE_SIZE);
-
   return {
     images,
     loading,
     error,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-    pageSize: PAGE_SIZE,
-    totalImages,
     addImage,
     deleteImage,
     refreshImages,
