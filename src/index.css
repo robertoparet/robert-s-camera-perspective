@@ -915,7 +915,7 @@ body {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-end !important; /* Cambio de flex-start a flex-end para pegar al bottom */
+    justify-content: center !important; /* Cambio de flex-end a center para centrar */
     padding: 1.5rem 1rem 2rem 1rem !important; /* Reducido padding superior */
   }
   
@@ -991,7 +991,7 @@ body {
     height: 42vh !important; /* Reducido para dar más espacio a la foto */
     min-height: 340px !important; /* Reducido para más compacto */
     padding: 1.25rem 0.875rem 1.5rem 0.875rem !important; /* Padding más compacto */
-    justify-content: flex-end !important; /* Pegar contenido al bottom */
+    justify-content: center !important; /* Centrar contenido en su sección */
   }
   
   .fullscreen-photo-container {
@@ -1034,7 +1034,7 @@ body {
     height: 40vh !important; /* Reducido para maximizar foto */
     min-height: 320px !important; /* Más compacto */
     padding: 1rem 0.75rem 1.25rem 0.75rem !important; /* Padding muy compacto */
-    justify-content: flex-end !important; /* Pegar contenido al bottom */
+    justify-content: center !important; /* Centrar contenido en su sección */
   }
   
   .fullscreen-photo-container {
