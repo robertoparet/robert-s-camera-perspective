@@ -22,6 +22,7 @@ export interface GalleryImage {
   fecha_subida: string;
   album_id?: string | null;
   user_id?: string;
+  is_covered?: boolean;
 }
 
 export async function signIn(email: string, password: string) {
@@ -41,6 +42,7 @@ export async function signOut() {
 
 export async function getImages(page = 1, pageSize = 12, albumId?: string | null) {
   try {
+    console.log('🔍 getImages called with:', { page, pageSize, albumId });
     const from = (page - 1) * pageSize;
     
     let query = supabase
@@ -51,14 +53,23 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
       query = query.eq('album_id', albumId);
     }
 
+    console.log('📡 Executing Supabase query...');
     const { data, count, error } = await query
       .order('fecha_subida', { ascending: false })
       .range(from, from + pageSize - 1);
 
+    console.log('📊 Supabase response:', { 
+      dataLength: data?.length || 0, 
+      count, 
+      error: error?.message || null,
+      firstItem: data?.[0] || null 
+    });
+
     if (error) {
       console.error('Supabase query error:', error);
       throw error;
-    }    console.log('Fetched images:', { count, imageCount: data?.length });
+    }
+
     return {
       images: data || [],
       totalCount: count || 0
@@ -227,6 +238,77 @@ export async function updateAlbumName(albumId: string, newName: string, newDescr
     .from('albumes')
     .update(updateData)
     .eq('id', albumId);
+
+  if (error) throw error;
+}
+
+// Funciones para manejar foto de portada
+export async function setCoverImage(imageId: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  // Primero, quitar todas las imágenes de portada existentes
+  const { error: resetError } = await supabase
+    .from('imagenes')
+    .update({ is_covered: false })
+    .eq('is_covered', true);
+
+  if (resetError) throw resetError;
+
+  // Luego, establecer la nueva imagen como portada
+  const { error } = await supabase
+    .from('imagenes')
+    .update({ is_covered: true })
+    .eq('id', imageId);
+
+  if (error) throw error;
+}
+
+export async function getCoverImage() {
+  const { data, error } = await supabase
+    .from('imagenes')
+    .select('*')
+    .eq('is_covered', true)
+    .single();
+
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+    console.error('Error fetching cover image:', error);
+    throw error;
+  }
+  
+  return data || null;
+}
+
+// Nueva función para obtener múltiples imágenes de portada para el slideshow
+export async function getCoverImages(limit: number = 3) {
+  const { data, error } = await supabase
+    .from('imagenes')
+    .select('*')
+    .eq('is_covered', true)
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching cover images:', error);
+    throw error;
+  }
+  
+  return data || [];
+}
+
+export async function removeCoverImage(imageId: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('No authenticated session found');
+  }
+
+  const { error } = await supabase
+    .from('imagenes')
+    .update({ is_covered: false })
+    .eq('id', imageId);
 
   if (error) throw error;
 }

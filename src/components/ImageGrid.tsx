@@ -23,13 +23,14 @@ export function ImageGrid() {
             // Loading skeletons
             [...Array(12)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="relative pt-[100%] bg-gray-800/50 rounded-xl"></div>
+                <div className="relative pt-[100%] bg-gray-800/50"></div>
               </div>
             ))
           ) : images.length > 0 ? (
-            images.map((image: Image, index: number) => (              <div 
+            images.map((image: Image, index: number) => (
+              <div 
                 key={image.id} 
-                className="group relative bg-gray-800/30 rounded-xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
+                className="group relative bg-gray-800/30 overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
                 onClick={() => {
                   setPhotoIndex(index);
                   setOpen(true);
@@ -39,7 +40,7 @@ export function ImageGrid() {
                   <img
                     src={image.url}
                     alt={image.titulo}
-                    className="w-full h-auto object-contain bg-black/20 rounded-xl"
+                    className="w-full h-auto object-contain bg-black/20"
                     loading="lazy"
                   />
                 </div>
@@ -61,7 +62,7 @@ export function ImageGrid() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 rounded-lg bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
             >
               Previous
             </button>
@@ -71,7 +72,7 @@ export function ImageGrid() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-lg bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
             >
               Next
             </button>
@@ -83,12 +84,11 @@ export function ImageGrid() {
         open={open}
         close={() => setOpen(false)}
         index={photoIndex}
-        slides={images.map(img => ({ src: img.url, alt: img.titulo }))}
-        plugins={[Zoom]}
-        styles={{
-          container: { backgroundColor: "rgba(0, 0, 0, .95)" },
-          root: { "--yarl__color_backdrop": "rgba(0, 0, 0, .95)" }
-        }}        zoom={{
+        slides={images.map(img => ({ src: img.url, alt: img.titulo }))}        plugins={[Zoom]}        styles={{
+          container: { backgroundColor: "rgba(255, 255, 255, 0.3)" },
+          root: { "--yarl__color_backdrop": "rgba(255, 255, 255, 0.3)" }
+        }}
+        zoom={{
           maxZoomPixelRatio: 3,
           zoomInMultiplier: 1.25,
           doubleTapDelay: 300,
