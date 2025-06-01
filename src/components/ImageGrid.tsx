@@ -6,14 +6,9 @@ import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 export function ImageGrid() {
-  const { images, currentPage, totalPages, loading, setCurrentPage } = useImages();
+  const { images, loading } = useImages();
   const [open, setOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-
-  const handlePageChange = (newPage: number) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setCurrentPage(newPage);
-  };
 
   return (
     <>
@@ -53,31 +48,7 @@ export function ImageGrid() {
             <div className="col-span-full text-center py-12 text-gray-500">
               No images found
             </div>
-          )}
-        </div>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-8">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
-            >
-              Previous
-            </button>
-            <span className="text-lg">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        )}
+          )}        </div>
       </div>
 
       <Lightbox
