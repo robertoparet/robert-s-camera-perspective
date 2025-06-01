@@ -40,10 +40,9 @@ export async function signOut() {
   if (error) throw error;
 }
 
-export async function getImages(page = 1, pageSize = 12, albumId?: string | null) {
+export async function getImages(albumId?: string | null) {
   try {
-    console.log('🔍 getImages called with:', { page, pageSize, albumId });
-    const from = (page - 1) * pageSize;
+    console.log('🔍 getImages called - loading ALL images:', { albumId });
     
     let query = supabase
       .from('imagenes')
@@ -53,10 +52,9 @@ export async function getImages(page = 1, pageSize = 12, albumId?: string | null
       query = query.eq('album_id', albumId);
     }
 
-    console.log('📡 Executing Supabase query...');
+    console.log('📡 Executing Supabase query without pagination...');
     const { data, count, error } = await query
-      .order('fecha_subida', { ascending: false })
-      .range(from, from + pageSize - 1);
+      .order('fecha_subida', { ascending: false });
 
     console.log('📊 Supabase response:', { 
       dataLength: data?.length || 0, 
