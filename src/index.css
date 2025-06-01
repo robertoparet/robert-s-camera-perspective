@@ -906,17 +906,17 @@ body {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 60vh !important; /* Revertido a 60vh original */
-    max-height: 60vh !important;
-    min-height: 400px !important; /* Revertido a 400px original */
+    height: 45vh !important; /* Reducido de 55vh a 45vh para más espacio a la foto */
+    max-height: 45vh !important;
+    min-height: 350px !important; /* Reducido para comprimir contenido */
     overflow-y: auto !important;
     overflow-x: hidden !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    padding: 2.5rem 1rem 3rem 1rem !important; /* Revertido al original */
+    justify-content: flex-end !important; /* Cambio de flex-start a flex-end para pegar al bottom */
+    padding: 1.5rem 1rem 2rem 1rem !important; /* Reducido padding superior */
   }
   
   .fullscreen-photo-container {
@@ -925,146 +925,153 @@ body {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 40vh !important; /* Revertido a 40vh original */
-    max-height: 40vh !important;
+    height: 55vh !important; /* Aumentado de 45vh a 55vh para foto más prominente */
+    max-height: 55vh !important;
     z-index: 1 !important;
   }
-    /* Asegurar que los botones sean completamente visibles y MÁS GRANDES */
+  /* Asegurar que los botones sean completamente visibles y MÁS GRANDES - COMPACTOS */
   .gallery-button {
     position: relative !important;
     width: 100% !important;
-    max-width: 320px !important; /* Aumentado de 280px a 320px */
-    margin: 0 auto 1.5rem auto !important;
-    padding: 1.25rem 2.5rem !important; /* Aumentado de 1rem 2rem */
-    font-size: 1.125rem !important; /* Aumentado de 1rem */
-    min-height: 56px !important; /* Aumentado de 48px */
+    max-width: 320px !important;
+    margin: 0 auto 1rem auto !important; /* Reducido de 1.5rem a 1rem */
+    padding: 1.25rem 2.5rem !important;
+    font-size: 1.125rem !important;
+    min-height: 56px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
-    font-weight: 500 !important; /* Añadido peso de fuente */
+    font-weight: 500 !important;
   }
   
   .instagram-button {
     position: relative !important;
     width: 100% !important;
-    max-width: 320px !important; /* Aumentado de 280px a 320px */
-    margin: 0 auto 2rem auto !important;
-    padding: 1.125rem 2rem !important; /* Aumentado de 0.875rem 1.5rem */
-    font-size: 1rem !important; /* Aumentado de 0.875rem */
-    min-height: 52px !important; /* Aumentado de 44px */
+    max-width: 320px !important;
+    margin: 0 auto 1rem auto !important; /* Reducido de 2rem a 1rem */
+    padding: 1.125rem 2rem !important;
+    font-size: 1rem !important;
+    min-height: 52px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
-    gap: 0.625rem !important; /* Aumentado de 0.5rem */
+    gap: 0.625rem !important;
     text-decoration: none !important;
-    font-weight: 500 !important; /* Añadido peso de fuente */
+    font-weight: 500 !important;
   }
   
-  /* Título y subtítulo MÁS GRANDES */
+  /* Título y subtítulo MÁS GRANDES - COMPACTOS */
   .content-container h1 {
-    margin: 0 0 1rem 0 !important; /* Aumentado de 0.75rem */
+    margin: 0 0 0.75rem 0 !important; /* Reducido de 1rem a 0.75rem */
     padding: 0 !important;
-    font-size: 2.25rem !important; /* Aumentado de 2rem */
-    line-height: 1.1 !important;
+    font-size: 2.25rem !important;
+    line-height: 1.05 !important; /* Reducido line-height para más compacto */
     text-align: center !important;
     flex-shrink: 0 !important;
-    font-weight: 600 !important; /* Añadido peso de fuente */
+    font-weight: 600 !important;
   }
   
   .content-container p {
-    margin: 0 0 2rem 0 !important; /* Aumentado de 1.5rem */
+    margin: 0 0 1.25rem 0 !important; /* Reducido de 2rem a 1.25rem */
     padding: 0 !important;
-    font-size: 1.125rem !important; /* Aumentado de 1rem */
+    font-size: 1.125rem !important;
     text-align: center !important;
     flex-shrink: 0 !important;
-    line-height: 1.4 !important; /* Añadido mejor espaciado de línea */
+    line-height: 1.3 !important; /* Reducido line-height */
   }
 }
 
 /* Corrección específica para móviles pequeños */
 @media screen and (max-width: 480px) {
   .content-container {
-    height: 60vh !important; /* Revertido al original */
-    min-height: 400px !important; /* Revertido al original */
-    padding: 2rem 0.875rem 3.5rem 0.875rem !important; /* Revertido al original */
+    height: 42vh !important; /* Reducido para dar más espacio a la foto */
+    min-height: 340px !important; /* Reducido para más compacto */
+    padding: 1.25rem 0.875rem 1.5rem 0.875rem !important; /* Padding más compacto */
+    justify-content: flex-end !important; /* Pegar contenido al bottom */
   }
   
   .fullscreen-photo-container {
-    height: 40vh !important; /* Revertido al original */
+    height: 58vh !important; /* Aumentado significativamente para foto más prominente */
   }
   
   .content-container h1 {
-    font-size: 2rem !important; /* Aumentado de 1.75rem */
+    font-size: 2rem !important;
     font-weight: 600 !important;
+    margin: 0 0 0.5rem 0 !important; /* Más compacto */
+    line-height: 1.05 !important;
   }
   
   .gallery-button {
-    padding: 1.125rem 1.875rem !important; /* Aumentado significativamente */
-    font-size: 1rem !important; /* Aumentado de 0.875rem */
-    margin: 0 auto 1.25rem auto !important;
-    min-height: 52px !important; /* Aumentado */
-    max-width: 300px !important; /* Aumentado */
+    padding: 1.125rem 1.875rem !important;
+    font-size: 1rem !important;
+    margin: 0 auto 0.75rem auto !important; /* Más compacto */
+    min-height: 52px !important;
+    max-width: 300px !important;
   }
   
   .instagram-button {
-    padding: 1rem 1.625rem !important; /* Aumentado significativamente */
-    font-size: 0.9rem !important; /* Aumentado de 0.8rem */
-    margin: 0 auto 1.5rem auto !important;
-    min-height: 48px !important; /* Aumentado */
-    max-width: 300px !important; /* Aumentado */
+    padding: 1rem 1.625rem !important;
+    font-size: 0.9rem !important;
+    margin: 0 auto 0.5rem auto !important; /* Más compacto */
+    min-height: 48px !important;
+    max-width: 300px !important;
   }
   
   .content-container p {
-    font-size: 1.0625rem !important; /* Aumentado ligeramente */
-    line-height: 1.4 !important;
+    font-size: 1.0625rem !important;
+    line-height: 1.3 !important;
+    margin: 0 0 1rem 0 !important; /* Más compacto */
   }
 }
 
 /* Corrección para móviles extra pequeños */
 @media screen and (max-width: 375px) {
   .content-container {
-    min-height: 420px !important; /* Revertido al original */
-    padding: 1.25rem 0.75rem 4rem 0.75rem !important; /* Revertido al original */
+    height: 40vh !important; /* Reducido para maximizar foto */
+    min-height: 320px !important; /* Más compacto */
+    padding: 1rem 0.75rem 1.25rem 0.75rem !important; /* Padding muy compacto */
+    justify-content: flex-end !important; /* Pegar contenido al bottom */
   }
   
   .fullscreen-photo-container {
-    height: 40vh !important; /* Revertido al original */
+    height: 60vh !important; /* Foto muy prominente en pantallas pequeñas */
   }
   
   .content-container h1 {
-    font-size: 1.75rem !important; /* Aumentado de 1.5rem */
+    font-size: 1.75rem !important;
     font-weight: 600 !important;
-    margin: 0 0 0.75rem 0 !important;
+    margin: 0 0 0.375rem 0 !important; /* Muy compacto */
+    line-height: 1.05 !important;
   }
   
   .content-container p {
-    font-size: 1rem !important; /* Mantenido más grande */
-    margin: 0 0 1.25rem 0 !important;
-    line-height: 1.4 !important;
+    font-size: 1rem !important;
+    margin: 0 0 0.75rem 0 !important; /* Muy compacto */
+    line-height: 1.25 !important;
   }
   
   .gallery-button {
-    padding: 1rem 1.5rem !important; /* Aumentado significativamente */
-    font-size: 0.9rem !important; /* Aumentado de 0.8rem */
-    margin: 0 auto 1rem auto !important;
-    min-height: 48px !important; /* Aumentado */
-    max-width: 280px !important; /* Aumentado ligeramente */
+    padding: 1rem 1.5rem !important;
+    font-size: 0.9rem !important;
+    margin: 0 auto 0.5rem auto !important; /* Muy compacto */
+    min-height: 48px !important;
+    max-width: 280px !important;
   }
   
   .instagram-button {
-    padding: 0.875rem 1.25rem !important; /* Aumentado */
-    font-size: 0.8rem !important; /* Aumentado de 0.75rem */
-    margin: 0 auto 1.25rem auto !important;
-    min-height: 44px !important; /* Aumentado */
-    max-width: 280px !important; /* Aumentado ligeramente */
+    padding: 0.875rem 1.25rem !important;
+    font-size: 0.8rem !important;
+    margin: 0 auto 0.25rem auto !important; /* Muy compacto */
+    min-height: 44px !important;
+    max-width: 280px !important;
   }
   
   .instagram-button svg {
-    width: 1.125rem !important; /* Aumentado el ícono */
+    width: 1.125rem !important;
     height: 1.125rem !important;
   }
 }
