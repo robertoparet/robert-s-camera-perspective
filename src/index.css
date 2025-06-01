@@ -265,84 +265,96 @@ body {
 /* Media query específica para dispositivos muy pequeños (iPhone SE, etc.) */
 @media (max-width: 480px) and (max-height: 720px) {
   .fullscreen-photo-container {
-    height: 50vh !important;
-  }
-  
-  .content-container {
-    top: 50vh !important;
-    height: 50vh !important;
-    padding: 1rem 0.75rem !important;
-    overflow-y: auto !important;
-  }
-  
-  .content-container h1 {
-    font-size: 1.75rem !important;
-    margin-bottom: 0.5rem !important;
-    line-height: 1.1 !important;
-  }
-  
-  .content-container p {
-    font-size: 0.875rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  .gallery-button {
-    padding: 0.75rem 1.25rem !important;
-    font-size: 0.875rem !important;
-    margin-bottom: 0.75rem !important;
-    max-width: 100% !important;
-  }
-  
-  .instagram-button {
-    padding: 0.625rem 1rem !important;
-    font-size: 0.75rem !important;
-    max-width: 100% !important;
-  }
-}
-
-/* Media query súper específica para iPhone SE (375x667) */
-@media (max-width: 375px) and (max-height: 667px) {
-  .fullscreen-photo-container {
     height: 45vh !important;
   }
   
   .content-container {
     top: 45vh !important;
     height: 55vh !important;
-    padding: 0.75rem 0.5rem !important;
+    padding: 1.5rem 1rem !important;
     overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
   }
   
   .content-container h1 {
-    font-size: 1.5rem !important;
-    margin-bottom: 0.25rem !important;
-    line-height: 1.05 !important;
+    font-size: 1.875rem !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.1 !important;
   }
   
   .content-container p {
-    font-size: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
+    font-size: 1rem !important;
+    margin-bottom: 1.5rem !important;
   }
   
   .gallery-button {
-    padding: 0.625rem 1rem !important;
-    font-size: 0.75rem !important;
-    margin-bottom: 0.5rem !important;
+    padding: 0.875rem 1.5rem !important;
+    font-size: 1rem !important;
+    margin-bottom: 1.25rem !important;
+    max-width: 100% !important;
+  }
+  
+  .instagram-button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.875rem !important;
+    max-width: 100% !important;
+    gap: 0.5rem !important;
+  }
+  
+  .instagram-button svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+}
+
+/* Media query súper específica para iPhone SE (375x667) */
+@media (max-width: 375px) and (max-height: 667px) {
+  .fullscreen-photo-container {
+    height: 40vh !important;
+  }
+  
+  .content-container {
+    top: 40vh !important;
+    height: 60vh !important;
+    padding: 1.25rem 0.875rem !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+  
+  .content-container h1 {
+    font-size: 1.75rem !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .content-container p {
+    font-size: 0.95rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  
+  .gallery-button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 1rem !important;
     max-width: 100% !important;
     width: 100% !important;
   }
   
   .instagram-button {
-    padding: 0.5rem 0.875rem !important;
-    font-size: 0.675rem !important;
+    padding: 0.625rem 1rem !important;
+    font-size: 0.8rem !important;
     max-width: 100% !important;
     width: 100% !important;
-    gap: 0.25rem !important;
+    gap: 0.375rem !important;
   }
   
   .instagram-button svg {
-    width: 1rem !important;
-    height: 1rem !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
   }
 }
 
@@ -403,8 +415,8 @@ body {
   .header-reorganized {
     flex-direction: column !important;
     gap: 1rem !important;
-    padding: 1rem 3rem !important;
-    margin-top: 0.5rem !important;
+    padding: 0.5rem 3rem !important;
+    margin-top: 0 !important;
   }
   
   .header-home-button {
@@ -434,8 +446,8 @@ body {
 
 @media (max-width: 480px) {
   .header-reorganized {
-    padding: 0.75rem 3rem !important;
-    margin-top: 0.25rem !important;
+    padding: 0.25rem 3rem !important;
+    margin-top: 0 !important;
   }
   
   .header-center-name {
@@ -610,8 +622,30 @@ body {
   width: 100vw !important;
   max-width: none !important;
   margin-left: calc(-50vw + 50%) !important;
-  padding: 0 2rem !important;
   box-sizing: border-box !important;
+  /* Mobile-specific padding to match photo gaps and prevent overlap with fixed header */
+  padding: 0 1rem !important;
+}
+
+/* Tablet and larger screens */
+@media (min-width: 768px) {
+  .gallery-container {
+    padding: 0 2rem !important;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1024px) {
+  .gallery-container {
+    padding: 0 3rem !important;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1280px) {
+  .gallery-container {
+    padding: 0 4rem !important;
+  }
 }
 
 /* Elimina cualquier limitación de ancho en contenedores padre */
@@ -633,15 +667,15 @@ body {
 /* CONFIGURACIÓN ULTRA REDUCIDA: Solo 1-2 fotos por fila para miniaturas MUCHO más grandes */
 .masonry-grid {
   column-count: 1 !important;
-  column-gap: 3rem !important;
+  column-gap: 2rem !important;
   width: 100% !important;
-  padding: 0 3rem !important;
+  padding: 0 2rem !important;
   box-sizing: border-box !important;
 }
 
 .masonry-grid .masonry-item {
   break-inside: avoid !important;
-  margin-bottom: 2rem !important;
+  margin-bottom: 1rem !important;
   width: 100% !important;
   display: block !important;
 }
@@ -684,7 +718,7 @@ body {
 @media (min-width: 768px) {
   .masonry-grid {
     column-count: 2 !important;
-    column-gap: 3rem !important;
+    column-gap: 2rem !important;
   }
 }
 
@@ -692,12 +726,20 @@ body {
 @media (min-width: 1024px) {
   .masonry-grid {
     column-count: 2 !important;
-    column-gap: 4rem !important;
-    padding: 0 4rem !important;
+    column-gap: 3rem !important;
+    padding: 0 3rem !important;
   }
 }
 
 @media (min-width: 1280px) {
+  .masonry-grid {
+    column-count: 2 !important;
+    column-gap: 3rem !important;
+    padding: 0 4rem !important;
+  }
+}
+
+@media (min-width: 1536px) {
   .masonry-grid {
     column-count: 2 !important;
     column-gap: 4rem !important;
@@ -705,7 +747,8 @@ body {
   }
 }
 
-@media (min-width: 1536px) {
+/* Para pantallas ultra anchas: mantener 2 columnas con más padding */
+@media (min-width: 1920px) {
   .masonry-grid {
     column-count: 2 !important;
     column-gap: 5rem !important;
@@ -713,8 +756,7 @@ body {
   }
 }
 
-/* Para pantallas ultra anchas: mantener 2 columnas con más padding */
-@media (min-width: 1920px) {
+@media (min-width: 2560px) {
   .masonry-grid {
     column-count: 2 !important;
     column-gap: 6rem !important;
@@ -722,32 +764,40 @@ body {
   }
 }
 
-@media (min-width: 2560px) {
-  .masonry-grid {
-    column-count: 2 !important;
-    column-gap: 8rem !important;
-    padding: 0 10rem !important;
-  }
+/* ===================================== */
+/* HEADER MÓVIL FIJO - ESTILOS ESPECÍFICOS */
+/* ===================================== */
+
+/* Container del header móvil fijo */
+.mobile-header-container {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* ===================================== */
-/* HEADER MÓVIL - ESTILOS ESPECÍFICOS   */
-/* ===================================== */
+/* Header móvil interno */
+.mobile-header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
 /* Botón del nombre Roberto Paret en móvil */
 .mobile-name-button {
-  color: var(--primary-blue) !important;
+  color: #1f2937 !important;
   font-weight: 700 !important;
   font-size: 1.125rem !important;
   transition: all 0.3s ease !important;
   text-decoration: none !important;
   border: none !important;
   background: transparent !important;
-  padding: 0.5rem 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .mobile-name-button:hover {
-  color: #001a3a !important;
+  color: #111827 !important;
   transform: none !important;
   text-decoration: none !important;
 }
@@ -755,14 +805,15 @@ body {
 /* Botón del menú hamburger */
 .mobile-menu-button {
   border: none !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 6px !important;
-  backdrop-filter: blur(10px) !important;
+  background: #f9fafb !important;
+  border-radius: 8px !important;
   transition: all 0.3s ease !important;
+  padding: 0.5rem !important;
+  margin: 0 !important;
 }
 
 .mobile-menu-button:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: #f3f4f6 !important;
   color: #1f2937 !important;
 }
 
@@ -776,35 +827,20 @@ body {
 
 .mobile-menu-item:hover {
   background: #f9fafb !important;
-  color: var(--primary-blue) !important;
+  color: #2563eb !important;
 }
 
 /* Estado activo para elementos del menú móvil */
 .mobile-menu-item.active {
   background: #eff6ff !important;
-  color: var(--primary-blue) !important;
+  color: #2563eb !important;
   font-weight: 600 !important;
 }
 
-/* Ajustes específicos para el header móvil */
-@media (max-width: 768px) {
-  .mobile-header {
-    padding: 0.5rem 0 !important;
-  }
-  
-  .mobile-name-button {
-    font-size: 1rem !important;
-  }
-  
-  /* Asegurar que el menú desplegable esté por encima de todo */
-  .mobile-header .relative > div {
-    z-index: 9999 !important;
-  }
-}
-
+/* Responsive adjustments for mobile header */
 @media (max-width: 480px) {
   .mobile-name-button {
-    font-size: 0.9rem !important;
+    font-size: 1rem !important;
   }
   
   .mobile-menu-button {
@@ -812,7 +848,103 @@ body {
   }
   
   .mobile-menu-button svg {
-    width: 1.25rem !important;
-    height: 1.25rem !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
   }
 }
+
+/* Media query adicional para asegurar visibilidad del botón Instagram en todos los móviles */
+@media (max-width: 480px) {
+  .content-container {
+    padding-bottom: 2rem !important;
+    min-height: 45vh !important;
+  }
+  
+  .instagram-button {
+    margin-bottom: 1rem !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Para dispositivos con altura muy reducida */
+@media (max-width: 480px) and (max-height: 600px) {
+  .fullscreen-photo-container {
+    height: 35vh !important;
+  }
+  
+  .content-container {
+    top: 35vh !important;
+    height: 65vh !important;
+    padding: 1rem 0.875rem 2rem 0.875rem !important;
+    overflow-y: auto !important;
+  }
+  
+  .content-container h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .content-container p {
+    font-size: 0.875rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .gallery-button {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 0.875rem !important;
+  }
+  
+  .instagram-button {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Padding adicional en móviles para compensar header fijo */
+@media (max-width: 767px) {
+  .masonry-grid {
+    padding-top: 0 !important; /* Eliminar padding-top, el gallery-container se encarga del espaciado */
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .masonry-grid {
+    padding-top: 0 !important; /* Eliminar padding-top, el gallery-container se encarga del espaciado */
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* ===================================== */
+/* PADDING ESPECÍFICO PARA CONTENIDO MÓVIL DEBAJO DEL HEADER FIJO */
+/* ===================================== */
+
+/* Padding móvil preciso para evitar que las fotos se deslicen bajo el header */
+@media (max-width: 767px) {
+  .gallery-container {
+    padding-top: 5rem !important; /* 80px - altura del header móvil + espaciado igual al gap entre fotos */
+  }
+}
+
+/* Para móviles muy pequeños, ajustar padding */
+@media (max-width: 480px) {
+  .gallery-container {
+    padding-top: 4.5rem !important; /* 72px - padding más ajustado para pantallas pequeñas */
+  }
+}
+
+/* Para móviles extra pequeños */
+@media (max-width: 375px) {
+  .gallery-container {
+    padding-top: 4.25rem !important; /* 68px - padding mínimo pero seguro */
+  }
+}
+
+/* ===================================== */

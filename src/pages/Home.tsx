@@ -80,12 +80,11 @@ export function Home() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [navigate]);
-
   // Cerrar menú móvil cuando se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (mobileMenuOpen && !target.closest('.mobile-header')) {
+      if (mobileMenuOpen && !target.closest('.mobile-header-container')) {
         setMobileMenuOpen(false);
       }
     };
@@ -171,13 +170,101 @@ export function Home() {
       </>
     );
   }
-
   // Vista de la colección
-  return (    <div className="collection-view min-h-screen w-full overflow-x-hidden">
-      <div className="gallery-container w-full py-8">        {/* Header reorganizado: Desktop normal, Mobile con nombre y menú desplegable */}
-        <div className="header-reorganized relative flex items-center justify-between mb-8 mt-4 w-full">
+  return (
+    <div className="collection-view min-h-screen w-full overflow-x-hidden">      {/* Header móvil pegado al top - fuera del container principal */}
+      <div className="mobile-header-container fixed top-0 left-0 right-0 z-50 flex md:hidden">
+        <div className="mobile-header flex items-center justify-between w-full px-4 py-4 bg-white shadow-sm border-b border-gray-100">{/* Nombre Roberto Paret como enlace al inicio */}
+          <button
+            onClick={() => setViewMode('landing')}
+            className="mobile-name-button text-lg font-bold text-gray-800 transition-colors duration-300"
+          >
+            Roberto Paret
+          </button>
+          
+          {/* Botón del menú hamburger */}
+          <div className="relative">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="mobile-menu-button p-2 text-gray-600 hover:text-gray-800 transition-colors duration-300 bg-gray-50 rounded-lg"
+              aria-label="Menú de navegación"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {mobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+
+            {/* Menú desplegable */}
+            {mobileMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999]">
+                <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setViewMode('landing');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="mobile-menu-item w-full text-left px-4 py-3 text-sm transition-colors duration-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    Home
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('collection');
+                      filterByAlbum(null);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`mobile-menu-item w-full text-left px-4 py-3 text-sm transition-colors duration-300 ${
+                      viewMode === 'collection' && !currentAlbumId
+                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    Colección
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('albums');
+                      loadAlbums();
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`mobile-menu-item w-full text-left px-4 py-3 text-sm transition-colors duration-300 ${
+                      viewMode === 'albums'
+                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    Álbumes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>      {/* Contenido principal con padding-top para el header fijo */}
+      <div className="gallery-container w-full pt-20 md:pt-8">
+        {/* Header reorganizado: Desktop normal */}
+        <div className="header-reorganized relative hidden md:flex items-center justify-between mb-8 mt-4 w-full">
           {/* Desktop Header - Home izquierda, Navegación derecha */}
-          <div className="desktop-header hidden md:flex items-center justify-between w-full">
+          <div className="desktop-header flex items-center justify-between w-full">
             {/* Home - Izquierda (como texto simple) */}
             <button
               onClick={() => setViewMode('landing')}
@@ -214,93 +301,6 @@ export function Home() {
               >
                 Álbumes
               </button>
-            </div>
-          </div>
-
-          {/* Mobile Header - Nombre izquierda, Menú desplegable derecha */}
-          <div className="mobile-header flex md:hidden items-center justify-between w-full">
-            {/* Nombre Roberto Paret como enlace al inicio */}
-            <button
-              onClick={() => setViewMode('landing')}
-              className="mobile-name-button text-lg font-bold text-gray-800 transition-colors duration-300"
-            >
-              Roberto Paret
-            </button>
-            
-            {/* Botón del menú hamburger */}
-            <div className="relative">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="mobile-menu-button p-2 text-gray-600 hover:text-gray-800 transition-colors duration-300"
-                aria-label="Menú de navegación"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {mobileMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
-              </button>
-
-              {/* Menú desplegable */}
-              {mobileMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                  <div className="py-2">                    <button
-                      onClick={() => {
-                        setViewMode('landing');
-                        setMobileMenuOpen(false);
-                      }}
-                      className="mobile-menu-item w-full text-left px-4 py-2 text-sm transition-colors duration-300 text-gray-700 hover:bg-gray-50"
-                    >
-                      Home
-                    </button>
-                    <button
-                      onClick={() => {
-                        setViewMode('collection');
-                        filterByAlbum(null);
-                        setMobileMenuOpen(false);
-                      }}
-                      className={`mobile-menu-item w-full text-left px-4 py-2 text-sm transition-colors duration-300 ${
-                        viewMode === 'collection' && !currentAlbumId
-                          ? 'bg-blue-50 text-blue-700 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      Colección
-                    </button>
-                    <button
-                      onClick={() => {
-                        setViewMode('albums');
-                        loadAlbums();
-                        setMobileMenuOpen(false);
-                      }}
-                      className={`mobile-menu-item w-full text-left px-4 py-2 text-sm transition-colors duration-300 ${
-                        viewMode === 'albums'
-                          ? 'bg-blue-50 text-blue-700 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      Álbumes
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
