@@ -81,8 +81,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       console.error('Error loading cover images:', error);
       setCoverImagesState([]);
     }
-  }, []);
-  useEffect(() => {
+  }, []);  useEffect(() => {
     console.log('🚀 ImageProvider useEffect triggered');
     console.log('📋 Starting data loading...');
     
@@ -91,14 +90,15 @@ export function ImageProvider({ children }: { children: ReactNode }) {
         console.log('📁 Loading albums...');
         await loadAlbums();
         
-        console.log('🖼️ Loading images...');
-        await loadImages();
+        // Cargar primero las imágenes de portada para evitar parpadeo
+        console.log('📸 Loading cover images...');
+        await loadCoverImages();
         
         console.log('🎯 Loading cover image...');
         await loadCoverImage();
         
-        console.log('📸 Loading cover images...');
-        await loadCoverImages();
+        console.log('🖼️ Loading images...');
+        await loadImages();
         
         console.log('✅ All data loading completed');
       } catch (error) {
