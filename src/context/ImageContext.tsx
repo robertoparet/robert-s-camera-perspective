@@ -45,9 +45,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     loadingRef.current = true;
     
     try {
-      setLoading(true);
-      console.log('🔍 Loading images with:', { currentPage, pageSize, currentAlbumId });
-      const { images: fetchedImages, totalCount } = await getImages(currentPage, pageSize, currentAlbumId);
+      setLoading(true);      console.log('🔍 Loading ALL images with:', { currentAlbumId });
+      const { images: fetchedImages, totalCount } = await getImages(currentAlbumId);
       
       console.log('📸 Fetched images:', { count: fetchedImages?.length, totalCount });
       
@@ -64,7 +63,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [currentPage, pageSize, currentAlbumId]);const loadCoverImage = useCallback(async () => {
+  }, [currentAlbumId]);const loadCoverImage = useCallback(async () => {
     try {
       const coverImg = await getCoverImageFromSupabase();
       setCoverImageState(coverImg);
