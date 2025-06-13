@@ -22,11 +22,11 @@ export interface ImageContextType {
   loading: boolean;
   setCurrentPage: (page: number) => void;
   pageSize: number;
-  totalImages: number;
-  filterByAlbum: (albumId: string | null) => void;
+  totalImages: number;  filterByAlbum: (albumId: string | null) => void;
   currentAlbumId: string | null;
   loadAlbums: () => Promise<void>;
   loadImages: (page?: number, albumId?: string | null) => Promise<void>;
+  shuffleImages: () => void;
 }
 
 export const ImageContext = createContext<ImageContextType>({
@@ -56,11 +56,11 @@ export const ImageContext = createContext<ImageContextType>({
   pageSize: 12,
   totalImages: 0,
   filterByAlbum: () => {},
-  currentAlbumId: null,
-  loadAlbums: async () => {
+  currentAlbumId: null,  loadAlbums: async () => {
     throw new Error('Not implemented');
   },
   loadImages: async () => {
     throw new Error('Not implemented');
-  }
+  },
+  shuffleImages: () => {}
 });

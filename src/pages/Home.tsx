@@ -33,8 +33,7 @@ const ImageCard = memo(({ image, index, onImageClick }: {
   </div>
 ));
 
-export function Home() {
-  const context = useContext(ImageContext);
+export function Home() {  const context = useContext(ImageContext);
   const { 
     images = [], 
     loading = true, 
@@ -42,13 +41,27 @@ export function Home() {
     filterByAlbum = () => {}, 
     currentAlbumId = null, 
     loadAlbums = () => {}, 
-    coverImages = [] 
-  } = context || {};
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+    coverImages = [],
+    shuffleImages = () => {}
+  } = context || {};const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<'landing' | 'collection' | 'albums'>('landing');
+  const [viewMode, setViewMode] = useState<'landing' | 'collection' | 'albums'>(() => {
+    // Recuperar el viewMode guardado en localStorage, si no existe usar 'landing'
+    const savedViewMode = localStorage.getItem('gallery-viewMode');
+    return (savedViewMode as 'landing' | 'collection' | 'albums') || 'landing';
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  // Guardar viewMode en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('gallery-viewMode', viewMode);
+  }, [viewMode]);
+  // Realeatorizar imágenes cuando se cambie a la vista de colección
+  useEffect(() => {
+    if (viewMode === 'collection' && images.length > 0) {
+      shuffleImages();
+    }
+  }, [viewMode, images.length, shuffleImages]);
 
   // Debug logs
   useEffect(() => {

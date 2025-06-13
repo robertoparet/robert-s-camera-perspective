@@ -50,9 +50,7 @@ export async function getImages(albumId?: string | null) {
 
     if (albumId) {
       query = query.eq('album_id', albumId);
-    }
-
-    console.log('📡 Executing Supabase query without pagination...');
+    }    console.log('📡 Executing Supabase query without pagination...');
     const { data, count, error } = await query
       .order('fecha_subida', { ascending: false });
 

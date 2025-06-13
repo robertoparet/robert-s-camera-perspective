@@ -55,7 +55,18 @@ export function ImageProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      setImages(fetchedImages);
+      // Función de aleatorización Fisher-Yates
+      const shuffleArray = (array: Image[]) => {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      };
+      
+      const randomizedImages = shuffleArray(fetchedImages);
+      setImages(randomizedImages);
       setTotalImages(totalCount);
     } catch (error) {
       console.error('Error loading images:', error);
@@ -235,11 +246,23 @@ export function ImageProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   }, [loadCoverImage, loadCoverImages, loadImages]);
-
   const filterByAlbum = useCallback((albumId: string | null) => {
     setCurrentAlbumId(albumId);
     setCurrentPage(1);
   }, []);
+  
+  // Función para realeatorizar las imágenes actuales sin nueva consulta
+  const shuffleImages = useCallback(() => {
+    setImages(currentImages => {
+      const shuffled = [...currentImages];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    });
+  }, []);
+  
   const totalPages = Math.ceil(totalImages / pageSize);
   
   // Debug logs
@@ -249,8 +272,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     loading,
     albums: albums.length
   });
-  
-  const contextValue = {
+    const contextValue = {
     images,
     albums,
     coverImage,
@@ -275,7 +297,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     filterByAlbum,
     currentAlbumId,
     loadAlbums,
-    loadImages  };
+    loadImages,
+    shuffleImages  };
 
   // Debug log para ver qué se está pasando al contexto
   console.log('🔄 ImageContext providing:', {

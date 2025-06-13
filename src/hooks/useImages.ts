@@ -17,8 +17,7 @@ export function useImages() {
   const [error, setError] = useState<string | null>(null);
   // Removido currentPage y totalImages ya que no usaremos paginación
   const isMounted = useRef(true);
-  const fetchInProgress = useRef(false);
-  const fetchImages = useCallback(async () => {
+  const fetchInProgress = useRef(false);  const fetchImages = useCallback(async () => {
     if (fetchInProgress.current) return;
     
     try {
@@ -28,7 +27,18 @@ export function useImages() {
       const { images: fetchedImages } = await getSupabaseImages();
       
       if (isMounted.current) {
-        setImages(fetchedImages || []);
+        // Función de aleatorización más robusta (Fisher-Yates shuffle)
+        const shuffleArray = (array: Image[]) => {
+          const shuffled = [...array];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          return shuffled;
+        };
+        
+        const randomizedImages = fetchedImages ? shuffleArray(fetchedImages) : [];
+        setImages(randomizedImages);
       }
     } catch (err) {
       if (isMounted.current) {
@@ -91,12 +101,23 @@ export function useImages() {
       }
     }
   }, [fetchImages]);
-
   const refreshImages = useCallback(async () => {
     if (isMounted.current) {
       await fetchImages();
     }
   }, [fetchImages]);
+
+  // Función para realeatorizar las imágenes existentes sin nueva consulta
+  const shuffleImages = useCallback(() => {
+    setImages(currentImages => {
+      const shuffled = [...currentImages];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    });
+  }, []);
 
   return {
     images,
@@ -105,5 +126,6 @@ export function useImages() {
     addImage,
     deleteImage,
     refreshImages,
+    shuffleImages, // Nueva función para realeatorizar
   };
 }
